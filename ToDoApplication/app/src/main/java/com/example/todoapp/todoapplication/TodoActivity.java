@@ -1,37 +1,43 @@
 package com.example.todoapp.todoapplication;
 
 import android.content.Intent;
+
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
+import com.example.todoapp.todoapplication.data.TodoEntry;
+
+
 import java.util.ArrayList;
 
 
-public class TodoActivity extends ActionBarActivity {
+public class TodoActivity extends ActionBarActivity implements EditItemDialogFragment.EditItemDialogListener {
 
-    private ArrayList<String> items;
-    private ArrayAdapter<String> itemsAdapter;
-    private ListView lvItems;
+    private FragmentManager         fm = getSupportFragmentManager();
 
-    private EditText edNewItem;
+    private ArrayList<TodoEntry>    items;
+    private TodoAdapter             itemsAdapter;
+    private ListView                lvItems;
+
+    private EditText                edNewItem;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
 
-        items  = new ArrayList<String>();
-        readItems();
-        itemsAdapter = new ArrayAdapter<String>(this,  	android.R.layout.simple_list_item_1, items);
+        items  = new ArrayList<TodoEntry>(TodoEntry.getAll());
+        itemsAdapter = new TodoAdapter(this, R.layout.activity_todo_item, items);
 
         lvItems = (ListView)findViewById(R.id.lvItems);
         lvItems.setAdapter(itemsAdapter);
@@ -39,7 +45,6 @@ public class TodoActivity extends ActionBarActivity {
         edNewItem = (EditText)findViewById(R.id.edNewItem);
         setupListViewListener();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,18 +68,20 @@ public class TodoActivity extends ActionBarActivity {
 
     public void addTodoItem(View v) {
         edNewItem = (EditText)findViewById(R.id.edNewItem);
-        itemsAdapter.add(edNewItem.getText().toString());
+        TodoEntry item = new TodoEntry(edNewItem.getText().toString());
+        item.save();
+        items.add(item);
         edNewItem.setText("");
-        saveItems();
+        itemsAdapter.notifyDataSetChanged();
     }
 
     private void setupListViewListener() {
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                items.get(position).delete();
                 items.remove(position);
                 itemsAdapter.notifyDataSetChanged();
-                saveItems();
                 return true;
             }
         });
@@ -82,45 +89,37 @@ public class TodoActivity extends ActionBarActivity {
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(TodoActivity.this, EditItemActivity.class);
+                /*Intent intent = new Intent(TodoActivity.this, EditItemActivity.class);
                 intent.putExtra(EditItemActivity.TODO_ITEM_KEY, position);
-                intent.putExtra(EditItemActivity.TODO_ITEM_TEXT, items.get(position));
+                intent.putExtra(EditItemActivity.TODO_ITEM_TEXT, items.get(position).description);
                 startActivityForResult(intent, EditItemActivity.REQUEST_CODE);
+                */
+                EditItemDialogFragment editFragment = new EditItemDialogFragment();
+                Bundle args = new Bundle();
+                args.putParcelable(EditItemActivity.TODO_ITEM, items.get(position));
+                editFragment.setArguments(args);
+                // Show DialogFragment
+                editFragment.show(fm, "Dialog Fragment");
             }
         });
-    }
-
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-
-        try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-        }catch(Exception e) {
-            items = new ArrayList<String>();
-            e.printStackTrace();
-        }
-    }
-
-    private void saveItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-
-        try {
-            FileUtils.writeLines(todoFile, items);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent response) {
         // REQUEST_CODE is defined above
         if (resultCode == RESULT_OK && requestCode == EditItemActivity.REQUEST_CODE) {
-            items.set(response.getIntExtra(EditItemActivity.TODO_ITEM_KEY, -1),
-                      response.getStringExtra(EditItemActivity.TODO_ITEM_TEXT));
+            int pos = response.getIntExtra(EditItemActivity.TODO_ITEM_KEY, -1);
+            String todoText = response.getStringExtra(EditItemActivity.TODO_ITEM_TEXT);
+            TodoEntry todoEntry = items.get(pos);
+            todoEntry.description=todoText;
+            todoEntry.save();
             itemsAdapter.notifyDataSetChanged();
-            saveItems();
         }
+    }
+
+
+    @Override
+    public void onFinishEditDialog() {
+        itemsAdapter.notifyDataSetChanged();
     }
 }

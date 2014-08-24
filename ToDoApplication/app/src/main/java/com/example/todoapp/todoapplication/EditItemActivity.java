@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.example.todoapp.todoapplication.R;
 
 public class EditItemActivity extends ActionBarActivity {
-
+    public static final String  TODO_ITEM = "todo_item";
     public static final String  TODO_ITEM_KEY = "todo_item_key";
     public static final String  TODO_ITEM_TEXT = "todo_item_text";
     public static final int     REQUEST_CODE = 100;

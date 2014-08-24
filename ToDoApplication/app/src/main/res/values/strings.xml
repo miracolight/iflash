@@ -7,5 +7,8 @@
     <string name="add_button_label">Add</string>
     <string name="title_activity_edit_item">Edit Item</string>
     <string name="save_button_label">Save</string>
+    <string name="cancel_button_label">Cancel</string>
     <string name="edit_item_below">Edit Item Below</string>
+    <string name="edit_item_due_date">Due On:</string>
+    <string name="edit_item_priority">Priority:</string>
 </resources>
