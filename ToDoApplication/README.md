@@ -13,7 +13,9 @@ Enhancements:
  * [x] Support for priority for items
  * [x] Persist the todo app in SQLite instead of using a text file
  * [x] Use a DialogFragment instead of new Activity to support editing items
+
 (the default priority is 3, and the default due day is three days after the todo creation date.) 
+
 ![Video Walkthrough](SimpleTodo.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
