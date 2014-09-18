@@ -24,3 +24,10 @@ dependencies {
     compile files('libs/android-async-http-1.4.5.jar')
     compile 'com.pkmmte.view:circularimageview:1.1+'
 }
+
+dependencies {
+    repositories {
+        mavenCentral()
+    }
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
+}

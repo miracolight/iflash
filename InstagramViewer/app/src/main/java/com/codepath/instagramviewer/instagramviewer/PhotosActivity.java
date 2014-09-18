@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import com.codepath.instagramviewer.instagramviewer.object.InstagramComment;
@@ -20,16 +21,41 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+
 
 public class PhotosActivity extends Activity {
     public static final String CLIENT_ID="caa2d15e2de442809782a23e68a1a5f9";
     private List<InstagramPhoto> photos;
     private InstagramPhotosAdapter  aPhotos;
 
+    private PullToRefreshLayout mPullToRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
+
+
+        // Now find the PullToRefreshLayout to setup
+        mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
+
+        // Now setup the PullToRefreshLayout
+        ActionBarPullToRefresh.from(this)
+                // Mark All Children as pullable
+                .allChildrenArePullable()
+                        // Set a OnRefreshListener
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        fetchPopularPhotos();
+                        mPullToRefreshLayout.setRefreshComplete();
+                    }
+                })
+                // Finally commit the setup to our PullToRefreshLayout
+                .setup(mPullToRefreshLayout);
 
         fetchPopularPhotos();
     }
@@ -98,8 +124,6 @@ public class PhotosActivity extends Activity {
                 }
             }
         });
-
-
 
     }
 
