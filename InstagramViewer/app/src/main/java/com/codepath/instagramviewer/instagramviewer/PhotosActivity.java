@@ -6,6 +6,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.codepath.instagramviewer.instagramviewer.object.InstagramComment;
+import com.codepath.instagramviewer.instagramviewer.object.InstagramPhoto;
+import com.codepath.instagramviewer.instagramviewer.object.InstagramUser;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -54,6 +57,8 @@ public class PhotosActivity extends Activity {
                 // data=>[x]=>”user”=>”username”
                 // data=>[x]=>”caption”=>”text”
                 // data=>[x]=>”likes”=>”count”
+                // data=>[x]=>"comments"=>[y]=>"text"
+                // data=>[x]=>"comments"=>[y]=>"from"=>"username"
                 JSONArray photosJSON = null;
                 try{
                     photos.clear();
@@ -62,14 +67,28 @@ public class PhotosActivity extends Activity {
                     for (int i = 0; i < photosJSON.length(); i++) {
                         JSONObject photoJSON = photosJSON.getJSONObject(i);
                         InstagramPhoto photo = new InstagramPhoto();
-                        photo.username = photoJSON.getJSONObject("user").getString("username");
+
+                        String userName = photoJSON.getJSONObject("user").getString("username");
+                        String profileImgUrl = photoJSON.getJSONObject("user").getString("profile_picture");
+                        photo.user = new InstagramUser(userName, profileImgUrl);
+
                         if (!photoJSON.isNull("caption")) {
                             photo.caption = photoJSON.getJSONObject("caption").getString("text");
                         }
                         photo.imageUrl = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getString("url");
+                        photo.imageWidth = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getInt("width");
                         photo.imageHeight = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getInt("height");
                         photo.likesCount = photoJSON.getJSONObject("likes").getInt("count");
+                        photo.creationDate = photoJSON.getLong("created_time");
 
+                        if (!photoJSON.isNull("comments")) {
+                            JSONArray commentsJSON = photoJSON.getJSONObject("comments").getJSONArray("data");
+                            JSONObject commentJSON = commentsJSON.getJSONObject(0);
+                            InstagramComment comment = new InstagramComment();
+                            comment.text = commentJSON.getString("text");
+                            comment.userName = commentJSON.getJSONObject("from").getString("username");
+                            photo.lastComment = comment;
+                        }
                         photos.add(photo);
                     }
 
