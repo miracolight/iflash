@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SearchActivity" >
+    <item android:id="@+id/action_search"
+        android:orderInCategory="5"
+        android:title="Search"
+        android:icon="@drawable/ic_launcher"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView" />
+
+    <item android:id="@+id/action_config_filters"
+        android:orderInCategory="10"
+        android:icon="@drawable/ic_setting_filters"
+        android:title="@string/config_filters"
+        android:showAsAction="always" />
+</menu>
