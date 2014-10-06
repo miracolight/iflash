@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 /*
@@ -43,15 +44,9 @@ public class TwitterClient extends OAuthBaseClient {
 		client.get(apiUrl, params, handler);
 	}*/
 
-    public void getHomeTimeline(AsyncHttpResponseHandler handler, Long maxId) {
+    public void getHomeTimeline(AsyncHttpResponseHandler handler, RequestParams params) {
         String apiUrl = getApiUrl("statuses/home_timeline.json");
         // Can specify query string params directly or through RequestParams.
-        RequestParams params = null;
-        if (maxId != null) {
-            params = new RequestParams();
-            params.put("max_id", maxId.toString());
-        }
-
         client.get(apiUrl, params, handler);
     }
 
@@ -77,5 +72,16 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("status", tweet);
         client.post(apiUrl, params, handler);
+    }
+
+    public void getMentionsTimeline(AsyncHttpResponseHandler handler, RequestParams params) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        client.get(apiUrl, params, handler);
+    }
+
+    public void getUserTimeline(AsyncHttpResponseHandler handler, RequestParams params) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        // Can specify query string params directly or through RequestParams.
+        client.get(apiUrl, params, handler);
     }
 }

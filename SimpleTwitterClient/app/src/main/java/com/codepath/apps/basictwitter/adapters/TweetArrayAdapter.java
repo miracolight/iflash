@@ -1,6 +1,7 @@
 package com.codepath.apps.basictwitter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.basictwitter.R;
+import com.codepath.apps.basictwitter.activities.ProfileActivity;
+import com.codepath.apps.basictwitter.models.User;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
@@ -26,7 +29,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Tweet item = getItem(position);
+        final Tweet item = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.tweet_item, parent, false);
@@ -43,6 +46,14 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(item.getUser().getProfileImageUrl(), viewHolder.ivProfileImage);
 
+        viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), ProfileActivity.class);
+                i.putExtra(User.ARG_PARAM, item.getUser());
+                getContext().startActivity(i);
+            }
+        });
         viewHolder.tvUserScreenName.setText(item.getUser().getScreenName());
         viewHolder.tvUserName.setText(item.getUser().getName());
         viewHolder.tvBody.setText(item.getBody());
