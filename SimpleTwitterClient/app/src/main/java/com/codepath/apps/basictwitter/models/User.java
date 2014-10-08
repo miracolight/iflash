@@ -3,27 +3,64 @@ package com.codepath.apps.basictwitter.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.From;
+import com.activeandroid.query.Select;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by qingdi on 9/23/14.
  */
-public class User implements Parcelable{
+
+@Table(name = "Users")
+public class User extends Model implements Parcelable{
     public static final String ARG_PARAM = "User";
 
-    private String  name;
+    @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private long    uid;
+
+    @Column(name = "name")
+    private String  name;
+
+    @Column(name = "screenname")
     private String  screenName;
+
+    @Column(name = "profileimageurl")
     private String  profileImageUrl;
+
+    @Column(name = "description")
     private String  description;
+
+    @Column(name = "followerscount")
     private int     followersCount;
+
+    @Column(name = "friendscount")
     private int     friendsCount;
 
-    public User() {
+    @Column(name = "statusescount")
+    private int     statusesCount;
 
+    public User() {
+        super();
+    }
+
+    public User(long uid, String name, String screenName, String profileImageUrl, String description,
+                int followersCount, int friendsCount, int statusesCount) {
+        this.uid = uid;
+        this.name = name;
+        this.screenName = screenName;
+        this.profileImageUrl = profileImageUrl;
+        this.description = description;
+        this.followersCount = followersCount;
+        this.friendsCount = friendsCount;
+        this.statusesCount = statusesCount;
     }
 
     public static User fromJSON(JSONObject jsonObject) {
@@ -36,6 +73,7 @@ public class User implements Parcelable{
             user.description = jsonObject.getString("description");
             user.followersCount = jsonObject.getInt("followers_count");
             user.friendsCount = jsonObject.getInt("friends_count");
+            user.statusesCount = jsonObject.getInt("statuses_count");
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -71,6 +109,10 @@ public class User implements Parcelable{
         return friendsCount;
     }
 
+    public int getStatusesCount() {
+        return statusesCount;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -85,6 +127,7 @@ public class User implements Parcelable{
         out.writeString(description);
         out.writeInt(followersCount);
         out.writeInt(friendsCount);
+        out.writeInt(statusesCount);
     }
 
     public static final Parcelable.Creator<User> CREATOR
@@ -106,5 +149,21 @@ public class User implements Parcelable{
         description = in.readString();
         followersCount = in.readInt();
         friendsCount = in.readInt();
+        statusesCount = in.readInt();
+    }
+
+    public static List<User> getByUid(long userId) {
+        // This is how you execute a query
+        From s =  new Select()
+                .from(User.class)
+                .where("uid = ?", Long.toString(userId));
+        return s.execute();
+    }
+
+    public static List<User> getAll() {
+        // This is how you execute a query
+        return new Select()
+                .from(User.class)
+                .execute();
     }
 }

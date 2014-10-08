@@ -2,7 +2,6 @@ package com.codepath.apps.basictwitter.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +42,19 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
 
         viewHolder.ivProfileImage.setImageResource(0);
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(item.getUser().getProfileImageUrl(), viewHolder.ivProfileImage);
+        viewHolder.ivProfileImage.setImageBitmap(null);
+        viewHolder.ivMedia.setImageResource(0);
+        viewHolder.ivMedia.setImageBitmap(null);
+        try {
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(item.getUser().getProfileImageUrl(), viewHolder.ivProfileImage);
+            if (item.getMediaUrl() != null) {
+                imageLoader.displayImage(item.getMediaUrl(), viewHolder.ivMedia);
+            }
+        } catch (Exception e) {
+
+        }
+
 
         viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +80,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         public final TextView   tvUserName;
         public final TextView   tvBody;
         public final TextView   tvRelCreatedAt;
+        public final ImageView  ivMedia;
 
         public ViewHolder(View view) {
             ivProfileImage = (ImageView)view.findViewById(R.id.ivProfileImage);
@@ -77,6 +88,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
             tvUserName = (TextView)view.findViewById(R.id.tvUserName);
             tvBody = (TextView)view.findViewById(R.id.tvBody);
             tvRelCreatedAt = (TextView)view.findViewById(R.id.tvRelCreatedAt);
+            ivMedia = (ImageView)view.findViewById(R.id.ivMedia);
         }
     }
 }

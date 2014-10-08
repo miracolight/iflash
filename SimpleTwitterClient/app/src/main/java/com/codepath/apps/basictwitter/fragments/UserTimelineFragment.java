@@ -1,16 +1,11 @@
 package com.codepath.apps.basictwitter.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 
-import com.codepath.apps.basictwitter.models.Tweet;
 import com.codepath.apps.basictwitter.models.User;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
-
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by qingdi on 10/4/14.
@@ -40,11 +35,11 @@ public class UserTimelineFragment extends TweetsListFragment{
     }
 
     public void populateTimeline() {
-        RequestParams params = new RequestParams();
+        Map params = new HashMap<String, String>();
+        params.put("user_id", Long.toString(user.getUid()));
         if (maxId != null) {
             params.put("max_id", maxId.toString());
         }
-        params.put("user_id", Long.toString(user.getUid()));
 
         populateTimeline("getUserTimeline", params);
     }

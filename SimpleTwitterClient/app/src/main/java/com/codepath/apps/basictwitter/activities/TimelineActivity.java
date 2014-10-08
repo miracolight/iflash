@@ -3,7 +3,9 @@ package com.codepath.apps.basictwitter.activities;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +28,7 @@ import com.codepath.apps.basictwitter.fragments.ComposeDialogFragment;
 import com.codepath.apps.basictwitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.basictwitter.fragments.MentionsTimelineFragment;
 import com.codepath.apps.basictwitter.fragments.TweetsListFragment;
+import com.codepath.apps.basictwitter.helpers.InternetHelper;
 import com.codepath.apps.basictwitter.listeners.EndlessScrollListener;
 import com.codepath.apps.basictwitter.listeners.FragmentTabListener;
 import com.codepath.apps.basictwitter.models.Tweet;
@@ -90,18 +93,54 @@ public class TimelineActivity extends FragmentActivity
 
 
     public void getLoginUser() {
-        client.getLoginUser(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject jsonObj) {
-                loginUser = User.fromJSON(jsonObj);
-            }
 
-            @Override
-            public void onFailure(Throwable e, String s) {
-                Log.d("debug", e.toString());
-                Log.d("debug", s.toString());
-            }
-        });
+        if (InternetHelper.isNetworkAvailable(this)) {
+            client.getLoginUser(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject jsonObj) {
+                    loginUser = User.fromJSON(jsonObj);
+                    writeToPref();
+
+                }
+
+                @Override
+                public void onFailure(Throwable e, String s) {
+                    Log.d("debug", e.toString());
+                    Log.d("debug", s.toString());
+                }
+            });
+        } else {
+            readFromPref();
+        }
+
+    }
+
+    private void readFromPref() {
+        SharedPreferences pref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        loginUser = new User(pref.getLong("uid", 0),
+                pref.getString("name", "n/a"),
+                pref.getString("screenName", "n/a"),
+                pref.getString("imageUrl", "n/a"),
+                pref.getString("desc", "n/a"),
+                pref.getInt("followersCount", 0),
+                pref.getInt("friendsCount", 0),
+                pref.getInt("statusCount", 0));
+    }
+
+    private void writeToPref() {
+        SharedPreferences.Editor editor =
+                PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putLong("uid", loginUser.getUid());
+        editor.putString("name", loginUser.getName());
+        editor.putString("screenName", loginUser.getScreenName());
+        editor.putString("imageUrl", loginUser.getProfileImageUrl());
+        editor.putString("desc", loginUser.getDescription());
+        editor.putInt("followersCount", loginUser.getFollowersCount());
+        editor.putInt("friendsCount", loginUser.getFriendsCount());
+        editor.putInt("statusCount", loginUser.getStatusesCount());
+        editor.commit();
+
     }
 
     @Override

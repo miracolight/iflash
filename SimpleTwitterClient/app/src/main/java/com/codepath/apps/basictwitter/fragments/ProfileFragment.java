@@ -23,6 +23,7 @@ public class ProfileFragment extends Fragment {
     public  TextView    tvTag;
     public  TextView    tvFollowing;
     public  TextView    tvFollowers;
+    public  TextView    tvTweets;
 
     public static ProfileFragment newInstance(User user) {
         ProfileFragment fragment = new ProfileFragment();
@@ -54,14 +55,28 @@ public class ProfileFragment extends Fragment {
         tvTag = (TextView)v.findViewById(R.id.tvTag);
         tvFollowing = (TextView)v.findViewById(R.id.tvFollowing);
         tvFollowers = (TextView)v.findViewById(R.id.tvFollowers);
+        tvTweets = (TextView)v.findViewById(R.id.tvTweets);
 
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(user.getProfileImageUrl(), ivProfileImage);
+        try{
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(user.getProfileImageUrl(), ivProfileImage);
+        } catch (Exception e) {
+
+        }
+
         tvUserName.setText(user.getName());
         tvTag.setText(user.getDescription());
-        tvFollowing.setText(Integer.toString(user.getFriendsCount())+" Following");
-        tvFollowers.setText(Integer.toString(user.getFollowersCount())+" Followers");
+        tvFollowing.setText(getFormattedCount(user.getFriendsCount())+" Following");
+        tvFollowers.setText(getFormattedCount(user.getFollowersCount())+" Followers");
+        tvTweets.setText(getFormattedCount(user.getStatusesCount())+" Tweets");
         return v;
     }
 
+    private String getFormattedCount(int count) {
+        if (count>1000) {
+            return Integer.toString(count/1000)+"k";
+        } else {
+            return Integer.toString(count);
+        }
+    }
 }
