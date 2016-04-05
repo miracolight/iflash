@@ -1,0 +1,146 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.vvavy.visiondemo.activity.ConfigActivity"
+    android:background="@android:color/black">
+
+    <FrameLayout
+        android:id="@+id/frmPreview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="#80FFFFFF"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal|bottom">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="CentX"
+                android:id="@+id/tvCentX"/>
+            <NumberPicker android:id="@+id/npCenterX"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="CentY"
+                android:id="@+id/tvCentY"/>
+            <NumberPicker android:id="@+id/npCenterY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Bright"
+                android:id="@+id/tvBrightness"/>
+            <NumberPicker android:id="@+id/npBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Alpha"
+                android:id="@+id/tvAlpha"/>
+            <NumberPicker android:id="@+id/npAlpha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Radius"
+                android:id="@+id/tvRadius"/>
+            <NumberPicker android:id="@+id/npRadius"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Gap"
+                android:id="@+id/tvGap"/>
+            <NumberPicker android:id="@+id/npGap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="NumPoints"
+                android:id="@+id/tvNumPoints"/>
+            <NumberPicker android:id="@+id/npNumPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reset"
+        android:id="@+id/btnReset"
+        android:layout_alignParentLeft="true"
+        android:onClick="onReset" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:id="@+id/btnSave"
+        android:layout_alignParentRight="true"
+        android:onClick="onSave" />
+</RelativeLayout>
