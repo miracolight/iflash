@@ -8,7 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
+import com.vvavy.visiondemo.app.model.ExamResult;
+import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -19,6 +23,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+
     }
 
     public void onConfig(View v) {
@@ -27,10 +34,17 @@ public class MainActivity extends Activity {
         startActivity(i);
     }
 
+    public void onResult(View v) {
+
+        Intent i = new Intent(this, ResultActivity.class);
+        startActivity(i);
+    }
+
+
     public void onExamLeft(View v) {
         Intent i = new Intent(this, ExamActivity.class);
         Bundle param = new Bundle();
-        param.putBoolean(PerimetryExam.LEFT_EYE_EXAM, true);
+        param.putBoolean(ExamActivity.LEFT_EYE_EXAM, true);
         i.putExtras(param);
         startActivity(i);
     }
@@ -38,7 +52,7 @@ public class MainActivity extends Activity {
     public void onExamRight(View v) {
         Intent i = new Intent(this, ExamActivity.class);
         Bundle param = new Bundle();
-        param.putBoolean(PerimetryExam.LEFT_EYE_EXAM, false);
+        param.putBoolean(ExamActivity.LEFT_EYE_EXAM, false);
         i.putExtras(param);
         startActivity(i);
     }

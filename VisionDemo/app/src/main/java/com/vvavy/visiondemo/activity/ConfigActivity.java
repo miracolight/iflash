@@ -7,21 +7,22 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
+import com.vvavy.visiondemo.app.handler.impl.DefaultIntensityHandler;
 import com.vvavy.visiondemo.app.object.Config;
-import com.vvavy.visiondemo.app.object.Intensity;
-import com.vvavy.visiondemo.app.object.PerimetryPoint;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.view.ConfigView;
 
 public class ConfigActivity extends Activity {
 
     private Config          config;
-    private PerimetryExam   exam;
+    //private PerimetryExam   exam;
 
     private ConfigView      configView;
 
@@ -41,11 +42,10 @@ public class ConfigActivity extends Activity {
 
         config = Config.loadConfig(this);
 
-        PerimetryExam.Builder examBuilder = new PerimetryExam.Builder(config);
-        exam = examBuilder.create();
-        adjustIntensity();
+        //exam = new DefaultPerimetryExam(config);
 
-        configView = new ConfigView(this, exam);
+
+        configView = new ConfigView(this, new DefaultPerimetryExam(config));
         configView.setBackgroundColor(Color.TRANSPARENT);
         ((FrameLayout) findViewById(R.id.frmPreview)).addView(configView);
 
@@ -59,11 +59,9 @@ public class ConfigActivity extends Activity {
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                exam.setCenterLeftX(size.x/2-newVal);
-                exam.setCenterRightX(size.x/2+newVal);
-                config.setCenterLeftX(size.x/2-newVal);
-                config.setCenterRightX(size.x/2+newVal);
-                configView.invalidate();
+                config.setCenterLeftX(size.x / 2 - newVal);
+                config.setCenterRightX(size.x / 2 + newVal);
+                redraw();
             }
         });
 
@@ -75,37 +73,8 @@ public class ConfigActivity extends Activity {
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                exam.setCenterY(newVal);
                 config.setCenterY(newVal);
-                configView.invalidate();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npBrightness);
-        np.setMinValue(0);
-        np.setMaxValue(Config.MAX_GREY);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getIntensity());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setIntensity(newVal);
-                adjustIntensity();
-                configView.invalidate();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npAlpha);
-        np.setMinValue(0);
-        np.setMaxValue(Config.MAX_ALPHA);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getAlpha());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setAlpha(newVal);
-                adjustIntensity();
-                configView.invalidate();
+                redraw();
             }
         });
 
@@ -117,9 +86,8 @@ public class ConfigActivity extends Activity {
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                exam.setGap(newVal);
                 config.setGap(newVal);
-                configView.invalidate();
+                redraw();
             }
         });
 
@@ -131,9 +99,8 @@ public class ConfigActivity extends Activity {
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                exam.setRadius(newVal);
                 config.setRadius(newVal);
-                configView.invalidate();
+                redraw();
             }
         });
 
@@ -146,17 +113,56 @@ public class ConfigActivity extends Activity {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 config.setNumPoints(newVal);
-                PerimetryExam e = (new PerimetryExam.Builder(config)).create();
-                exam.setPoints(e.getPoints());
-                configView.invalidate();
+                redraw();
+            }
+        });
+
+        np = (NumberPicker) findViewById(R.id.npNumFixations);
+        np.setMinValue(1);
+        np.setMaxValue(2);
+        np.setWrapSelectorWheel(false);
+        np.setValue(config.getNumFixations());
+        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                config.setNumFixations(newVal);
+                redraw();
+            }
+        });
+
+        np = (NumberPicker) findViewById(R.id.npPromptTime);
+        np.setMinValue(1);
+        np.setMaxValue(2);
+        np.setValue(config.getPromptTime()/100);
+        np.setDisplayedValues(new String[]{"100", "200"});
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                config.setPromptTime(newVal * 100);
+            }
+        });
+
+        np = (NumberPicker) findViewById(R.id.npDb);
+        np.setMinValue(10);
+        np.setMaxValue(40);
+        np.setWrapSelectorWheel(false);
+        np.setValue(config.getNumPoints());
+        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                config.setInitDb(newVal);
+                redraw();
             }
         });
     }
 
-    private void adjustIntensity() {
-        for (PerimetryPoint p : exam.getPoints()) {
-            p.setIntensity(new Intensity(config.getAlpha(), config.getIntensity()));
-        }
+    private void redraw() {
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = DefaultIntensityHandler.ALL_INTENSITIES[config.getInitDb()].getScreenBrightness();
+        getWindow().setAttributes(layout);
+        configView.setExam(new DefaultPerimetryExam(config));
+        configView.invalidate();
     }
 
     public void onSave(View v) {

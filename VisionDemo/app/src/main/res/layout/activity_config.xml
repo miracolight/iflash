@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vvavy.visiondemo.activity.ConfigActivity"
-    android:background="@android:color/black">
+    tools:context="com.vvavy.visiondemo.activity.ConfigActivity">
 
     <FrameLayout
         android:id="@+id/frmPreview"
@@ -60,36 +59,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Bright"
-                android:id="@+id/tvBrightness"/>
-            <NumberPicker android:id="@+id/npBrightness"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"  />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Alpha"
-                android:id="@+id/tvAlpha"/>
-            <NumberPicker android:id="@+id/npAlpha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"  />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:text="Radius"
                 android:id="@+id/tvRadius"/>
             <NumberPicker android:id="@+id/npRadius"
@@ -123,6 +92,51 @@
                 android:text="NumPoints"
                 android:id="@+id/tvNumPoints"/>
             <NumberPicker android:id="@+id/npNumPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Fixations"
+                android:id="@+id/tvNumFixations"/>
+            <NumberPicker android:id="@+id/npNumFixations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="PromptTime"
+                android:id="@+id/tvPromptTime"/>
+            <NumberPicker android:id="@+id/npPromptTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="InitDB"
+                android:id="@+id/tvDb"/>
+            <NumberPicker android:id="@+id/npDb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"  />
         </LinearLayout>

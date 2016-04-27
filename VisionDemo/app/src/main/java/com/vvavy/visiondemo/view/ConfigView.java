@@ -5,10 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
+import android.view.WindowManager;
 
-import com.vvavy.visiondemo.app.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.PerimetryExam;
 import com.vvavy.visiondemo.app.object.Config;
-import com.vvavy.visiondemo.app.object.PerimetryPoint;
+import com.vvavy.visiondemo.app.object.PerimetryStimulus;
 
 /**
  * Created by qingdi on 3/4/16.
@@ -18,10 +19,14 @@ public class ConfigView extends View{
 
     private Paint paint = new Paint();
 
-    private PerimetryExam exam;
+    private PerimetryExam   exam;
 
     public ConfigView(Context context, PerimetryExam exam) {
         super(context);
+        this.exam = exam;
+    }
+
+    public void setExam(PerimetryExam exam) {
         this.exam = exam;
     }
 
@@ -30,11 +35,11 @@ public class ConfigView extends View{
         // smooths
         // opacity
         //p.setAlpha(0x80); //
-
-        for (PerimetryPoint p : exam.getPoints()) {
-            paint.setColor(p.getColor());
-            canvas.drawCircle(exam.getCenterRightX()+p.getPoint().x*exam.getGap(),
-                        exam.getCenterY()+p.getPoint().y*exam.getGap(),
+        setBackgroundColor(exam.getStimuli().get(0).getBgColor());
+        for (PerimetryStimulus p : exam.getStimuli()) {
+            paint.setColor(p.getStimulusColor());
+            canvas.drawCircle(exam.getCenterRightX()+p.getPoint().x,
+                        exam.getCenterY()+p.getPoint().y,
                         exam.getRadius(), paint);
         }
 

@@ -4,19 +4,31 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.ExamTask;
-import com.vvavy.visiondemo.app.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.PerimetryExam;
+import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
+import com.vvavy.visiondemo.app.handler.impl.DefaultIntensityHandler;
+import com.vvavy.visiondemo.app.object.Intensity;
+import com.vvavy.visiondemo.app.task.ExamTask;
 import com.vvavy.visiondemo.app.object.Config;
+import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.view.ExamView;
 
+import java.util.List;
+import java.util.Locale;
+
 public class ExamActivity extends Activity {
+
+    public static final String LEFT_EYE_EXAM = "LEFT_EYE_EXAM";
+
 
     private Config          config;
     private PerimetryExam   exam;
@@ -26,10 +38,17 @@ public class ExamActivity extends Activity {
 
     final private Handler   uiHandler = new Handler();
 
+    private TextToSpeech    tts;
+
+    private VisionDBSQLiteHelper    dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
+
+        // temp test
+        dbHelper = VisionDBSQLiteHelper.getInstance(this);
 
         init();
 
@@ -41,15 +60,30 @@ public class ExamActivity extends Activity {
 
         config = Config.loadConfig(this);
 
-        PerimetryExam.Builder examBuilder = new PerimetryExam.Builder(config);
-        exam = examBuilder.create();
-
         Bundle param = getIntent().getExtras();
-        boolean leftEyeExam = param.getBoolean(PerimetryExam.LEFT_EYE_EXAM, true);
-        exam.setLeftEyeExam(leftEyeExam);
+        boolean leftEyeExam = param.getBoolean(LEFT_EYE_EXAM, true);
+
+        exam = new DefaultPerimetryExam(config, leftEyeExam?PerimetryExam.ExamType.LEFT:PerimetryExam.ExamType.RIGHT);
+
+        Intensity initIntensity = DefaultIntensityHandler.ALL_INTENSITIES[config.getInitDb()];
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = initIntensity.getScreenBrightness();
+        getWindow().setAttributes(layout);
+
         examView = new ExamView(this, exam);
-        examView.setBackgroundColor(Color.TRANSPARENT);
+        examView.setBackgroundColor(
+                Color.argb(initIntensity.getBgAlpha(),
+                        initIntensity.getBgGreyscale(), initIntensity.getBgGreyscale(), initIntensity.getBgGreyscale()));
         ((FrameLayout) findViewById(R.id.frmRun)).addView(examView);
+
+        tts =new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.ENGLISH);
+                }
+            }
+        });
     }
 
 
@@ -57,12 +91,18 @@ public class ExamActivity extends Activity {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 if (examTask == null) {
-                    examTask = new ExamTask(exam, uiHandler, examView);
+                    tts.speak("countdown. three. two. one.", TextToSpeech.QUEUE_FLUSH, null);
+
+                    while (tts.isSpeaking() ) {
+                    };
+
+                    examTask = new ExamTask(this, exam, uiHandler, examView);
                     Thread t = new Thread(examTask);
                     t.start();
                 } else if (!examTask.isTaskDone()){
-                    examTask.setCurrentPointVisible();
+                    examTask.setCurrentStimulusDetected();
                 } else {
+                    examTask.saveResult(dbHelper);
                     finish();
                 }
                 break;
