@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.vvavy.measurelab.updator.DisplayUpdator;
 import com.vvavy.measurelab.updator.impl.AlphaStateUpdator;
 import com.vvavy.measurelab.updator.impl.GreyStateUpdator;
 import com.vvavy.measurelab.updator.impl.ScreenBrightUpdator;
+import com.vvavy.measurelab.view.CustomBackgroundView;
 
 import java.lang.reflect.Field;
 
@@ -33,7 +35,7 @@ public class MainActivity extends Activity implements DisplayUpdator {
     private View        backView;
 
 
-    private View        stimulusView;
+    //private View        stimulusView;
 
     private boolean     backgroundChecked = true;
     private SeekBar     alphaSeekBar;
@@ -58,8 +60,10 @@ public class MainActivity extends Activity implements DisplayUpdator {
 
         state = new State();
 
-        backView = findViewById(R.id.rlBackground);
-        stimulusView = findViewById(R.id.rlStimulus);
+        backView = new CustomBackgroundView(this, state);
+        ((FrameLayout)findViewById(R.id.rlBackground)).addView(backView);
+
+        //stimulusView = findViewById(R.id.rlStimulus);
 
         tvAlphaValue = (TextView) findViewById(R.id.tvAlphaValue);
         alphaSeekBar = (SeekBar) findViewById(R.id.sbAlphaValue);
@@ -122,10 +126,11 @@ public class MainActivity extends Activity implements DisplayUpdator {
         getWindow().setAttributes(layout);
 
         // set background intensity
-        backView.setBackgroundColor(Color.argb(state.getBackAlpha(), state.getBackGrey(), state.getBackGrey(), state.getBackGrey()));
+        //backView.setBackgroundColor(Color.argb(state.getBackAlpha(), state.getBackGrey(), state.getBackGrey(), state.getBackGrey()));
+        backView.invalidate();
 
         // set simulus intensity
-        stimulusView.setBackgroundColor(Color.argb(state.getStimulusAlpha(), state.getStimulusGrey(), state.getStimulusGrey(), state.getStimulusGrey()));
+        //stimulusView.setBackgroundColor(Color.argb(state.getStimulusAlpha(), state.getStimulusGrey(), state.getStimulusGrey(), state.getStimulusGrey()));
 
         resetSetting();
     }

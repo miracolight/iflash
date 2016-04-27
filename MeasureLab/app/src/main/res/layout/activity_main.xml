@@ -13,18 +13,12 @@
         android:layout_height="fill_parent"
         android:orientation="horizontal">
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:layout_weight="35"
+            android:layout_weight="70"
             android:id="@+id/rlBackground">
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="35"
-            android:id="@+id/rlStimulus">
-        </RelativeLayout>
+        </FrameLayout>
         <RelativeLayout
             android:layout_width="0dip"
             android:layout_height="fill_parent"
