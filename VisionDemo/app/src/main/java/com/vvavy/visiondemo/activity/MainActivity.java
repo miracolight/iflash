@@ -8,11 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
-import com.vvavy.visiondemo.app.model.ExamResult;
-import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
-
-import java.util.List;
 
 
 public class MainActivity extends Activity {

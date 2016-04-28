@@ -1,13 +1,12 @@
-package com.vvavy.visiondemo.app.exam.impl;
+package com.vvavy.visiondemo.service.impl;
 
 import android.graphics.Point;
 
-import com.vvavy.visiondemo.app.handler.IntensityHandler;
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.handler.impl.DefaultIntensityHandler;
-import com.vvavy.visiondemo.app.object.Config;
-import com.vvavy.visiondemo.app.object.Intensity;
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
+import com.vvavy.visiondemo.service.IntensityService;
+import com.vvavy.visiondemo.service.PerimetryTestService;
+import com.vvavy.visiondemo.object.Config;
+import com.vvavy.visiondemo.object.Intensity;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,7 @@ import java.util.Random;
 /**
  * Created by qingdi on 3/8/16.
  */
-public class DefaultPerimetryExam implements PerimetryExam {
+public class DefaultPerimetryTestServiceImpl implements PerimetryTestService {
 
     public static final int     RESULT_DISPLAY_SIZE = 40;
     private int                 promptTime;
@@ -35,13 +34,13 @@ public class DefaultPerimetryExam implements PerimetryExam {
     private List<PerimetryStimulus>    resultPoints;
     private int                 currPointIndex;
 
-    private IntensityHandler    intensityHandler = new DefaultIntensityHandler();
+    private IntensityService intensityHandler = new DefaultIntensityServiceImpl();
 
-    public DefaultPerimetryExam(Config config) {
+    public DefaultPerimetryTestServiceImpl(Config config) {
         this(config, ExamType.RIGHT);
     }
 
-    public DefaultPerimetryExam(Config config, ExamType examType) {
+    public DefaultPerimetryTestServiceImpl(Config config, ExamType examType) {
 
         this.stimuli = new ArrayList<PerimetryStimulus>();
         this.stimuli.addAll(generatePointsByQuadrant(1, config.getInitDb(), config.getGap()));
@@ -96,7 +95,7 @@ public class DefaultPerimetryExam implements PerimetryExam {
             y = -y;
         }
 
-        Intensity defaultIndensity = DefaultIntensityHandler.ALL_INTENSITIES[initDb];
+        Intensity defaultIndensity = DefaultIntensityServiceImpl.ALL_INTENSITIES[initDb];
         stimuli.add(new PerimetryStimulus(new Point(1*x, 1*y), defaultIndensity));
         stimuli.add(new PerimetryStimulus(new Point(1*x, 3*y), defaultIndensity));
         stimuli.add(new PerimetryStimulus(new Point(1*x, 5*y), defaultIndensity));

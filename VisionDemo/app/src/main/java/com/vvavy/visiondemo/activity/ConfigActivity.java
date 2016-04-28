@@ -8,24 +8,33 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
-import com.vvavy.visiondemo.app.handler.impl.DefaultIntensityHandler;
-import com.vvavy.visiondemo.app.object.Config;
+import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
+import com.vvavy.visiondemo.service.impl.DefaultPerimetryTestServiceImpl;
+import com.vvavy.visiondemo.object.Config;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.view.ConfigView;
 
-public class ConfigActivity extends Activity {
+public class ConfigActivity extends Activity implements AdapterView.OnItemSelectedListener, SeekBar.OnSeekBarChangeListener {
 
     private Config          config;
     //private PerimetryExam   exam;
 
     private ConfigView      configView;
 
+    private SeekBar         skbConfigValue;
+    private TextView        tvConfigValue;
+    private Point           screenDisplaySize;
+    private String          currConfigOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,124 +54,112 @@ public class ConfigActivity extends Activity {
         //exam = new DefaultPerimetryExam(config);
 
 
-        configView = new ConfigView(this, new DefaultPerimetryExam(config));
+        configView = new ConfigView(this, new DefaultPerimetryTestServiceImpl(config));
         configView.setBackgroundColor(Color.TRANSPARENT);
         ((FrameLayout) findViewById(R.id.frmPreview)).addView(configView);
 
 
-        final Point size = config.getDisplaySize(this);
-        NumberPicker np = (NumberPicker) findViewById(R.id.npCenterX);
-        np.setMinValue(0);
-        np.setMaxValue(size.x/2);
-        np.setWrapSelectorWheel(false);
-        np.setValue((config.getCenterRightX()-config.getCenterLeftX())/2);
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        screenDisplaySize = config.getDisplaySize(this);
+        tvConfigValue = (TextView)findViewById(R.id.tvValue);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spnConfigOptions);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.config_options_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        int spinnerPosition = adapter.getPosition("CenterX");
+        spinner.setSelection(spinnerPosition);
+
+
+        skbConfigValue = (SeekBar)findViewById(R.id.skbConfigValue);
+        skbConfigValue.setProgress((config.getCenterRightX()-config.getCenterLeftX())/2);
+        skbConfigValue.setMax(screenDisplaySize.x/2);
+        skbConfigValue.setOnSeekBarChangeListener(this);
+
+        tvConfigValue.setText(Integer.toString(skbConfigValue.getProgress()));
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rgNumFixation);
+        if (config.getNumFixations()==1) {
+            radioGroup.check(R.id.rbF1);
+        } else {
+            radioGroup.check(R.id.rbF2);
+        }
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setCenterLeftX(size.x / 2 - newVal);
-                config.setCenterRightX(size.x / 2 + newVal);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rbF1) {
+                    config.setNumFixations(1);
+                } else {
+                    config.setNumFixations(2);
+                }
                 redraw();
             }
         });
 
-        np = (NumberPicker) findViewById(R.id.npCenterY);
-        np.setMinValue(0);
-        np.setMaxValue(size.y);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getCenterY());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        radioGroup = (RadioGroup) findViewById(R.id.rgDisplay);
+        if (config.getPromptTime()==100) {
+            radioGroup.check(R.id.rb100ms);
+        } else {
+            radioGroup.check(R.id.rb200ms);
+        }
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setCenterY(newVal);
-                redraw();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npGap);
-        np.setMinValue(0);
-        np.setMaxValue(Config.MAX_GAP);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getGap());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setGap(newVal);
-                redraw();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npRadius);
-        np.setMinValue(0);
-        np.setMaxValue(Config.MAX_RADIUS);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getRadius());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setRadius(newVal);
-                redraw();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npNumPoints);
-        np.setMinValue(0);
-        np.setMaxValue(Config.MAX_NUMOFPOINTS);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getNumPoints());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setNumPoints(newVal);
-                redraw();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npNumFixations);
-        np.setMinValue(1);
-        np.setMaxValue(2);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getNumFixations());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setNumFixations(newVal);
-                redraw();
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npPromptTime);
-        np.setMinValue(1);
-        np.setMaxValue(2);
-        np.setValue(config.getPromptTime()/100);
-        np.setDisplayedValues(new String[]{"100", "200"});
-        np.setWrapSelectorWheel(false);
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setPromptTime(newVal * 100);
-            }
-        });
-
-        np = (NumberPicker) findViewById(R.id.npDb);
-        np.setMinValue(10);
-        np.setMaxValue(40);
-        np.setWrapSelectorWheel(false);
-        np.setValue(config.getNumPoints());
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                config.setInitDb(newVal);
-                redraw();
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rb100ms) {
+                    config.setPromptTime(100);
+                } else {
+                    config.setPromptTime(200);
+                }
             }
         });
     }
 
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
     private void redraw() {
         WindowManager.LayoutParams layout = getWindow().getAttributes();
-        layout.screenBrightness = DefaultIntensityHandler.ALL_INTENSITIES[config.getInitDb()].getScreenBrightness();
+        layout.screenBrightness = DefaultIntensityServiceImpl.ALL_INTENSITIES[config.getInitDb()].getScreenBrightness();
         getWindow().setAttributes(layout);
-        configView.setExam(new DefaultPerimetryExam(config));
+        configView.setExam(new DefaultPerimetryTestServiceImpl(config));
         configView.invalidate();
+     //   resetSetting();
+    }
+
+
+
+    private void resetSetting() {
+        if ("CenterX".equals(currConfigOption)) {
+            skbConfigValue.setProgress((config.getCenterRightX()-config.getCenterLeftX())/2);
+            skbConfigValue.setMax(screenDisplaySize.x/2);
+        } else if ("CenterY".equals(currConfigOption)) {
+            skbConfigValue.setProgress(config.getCenterY());
+            skbConfigValue.setMax(screenDisplaySize.y);
+        } else if ("Radius".equals(currConfigOption)) {
+            skbConfigValue.setProgress(config.getRadius());
+            skbConfigValue.setMax(config.MAX_RADIUS);
+        } else if ("Gap".equals(currConfigOption)) {
+            skbConfigValue.setProgress(config.getGap());
+            skbConfigValue.setMax(config.MAX_GAP);
+        } else if ("NumOfStimulus".equals(currConfigOption)) {
+            skbConfigValue.setProgress(config.getNumPoints());
+            skbConfigValue.setMax(Config.MAX_NUMOFPOINTS);
+        } else if ("InitDB".equals(currConfigOption)) {
+            skbConfigValue.setProgress(config.getInitDb()-10);
+            skbConfigValue.setMax(30);
+        }
+        if ("InitDB".equals(currConfigOption)) {
+            tvConfigValue.setText(Integer.toString(skbConfigValue.getProgress()+10));
+        } else {
+            tvConfigValue.setText(Integer.toString(skbConfigValue.getProgress()));
+        }
+
     }
 
     public void onSave(View v) {
@@ -177,6 +174,56 @@ public class ConfigActivity extends Activity {
         finish();
         startActivity(getIntent());
     }
+
+    public void onPlus(View v) {
+        onButtonUpdate(1);
+    }
+
+    public void onMinus(View v) {
+        onButtonUpdate(-1);
+    }
+
+    private void onButtonUpdate(int delta) {
+        int currValue = Integer.parseInt(tvConfigValue.getText().toString());
+        int newValue = currValue+delta;
+        if (newValue<0) {
+            return;
+        }
+        if ("CenterX".equals(currConfigOption)) {
+            if (newValue <= screenDisplaySize.x/2){
+                config.setCenterLeftX(screenDisplaySize.x/2-newValue);
+                config.setCenterRightX(screenDisplaySize.x/2+newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
+            }
+        } else if ("CenterY".equals(currConfigOption)) {
+            if (newValue<=screenDisplaySize.y) {
+                config.setCenterY(newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
+            }
+        } else if ("Radius".equals(currConfigOption)) {
+            if (newValue <= Config.MAX_RADIUS) {
+                config.setRadius(newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
+            }
+        } else if ("Gap".equals(currConfigOption)) {
+            if (newValue <= Config.MAX_GAP) {
+                config.setGap(newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
+            }
+        } else if ("NumOfStimulus".equals(currConfigOption)) {
+            if (newValue <= Config.MAX_NUMOFPOINTS){
+                config.setNumPoints(newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
+            }
+        } else if ("InitDB".equals(currConfigOption)) {
+            if (newValue <=30) {
+                config.setInitDb(newValue+10);
+                tvConfigValue.setText(Integer.toString(newValue+10));
+            }
+        }
+        redraw();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -195,5 +242,45 @@ public class ConfigActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        currConfigOption = (String)parent.getItemAtPosition(pos);
+        System.out.println("onItemSelected: currConfigOption=" + currConfigOption);
+        resetSetting();
+    }
+
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+        tvConfigValue.setText(Integer.toString(progress));
+        if ("CenterX".equals(currConfigOption)) {
+            config.setCenterLeftX(screenDisplaySize.x / 2 - progress);
+            config.setCenterRightX(screenDisplaySize.x / 2 + progress);
+        } else if ("CenterY".equals(currConfigOption)) {
+            config.setCenterY(progress);
+        } else if ("Radius".equals(currConfigOption)) {
+            config.setRadius(progress);
+        } else if ("Gap".equals(currConfigOption)) {
+            config.setGap(progress);
+        } else if ("NumOfStimulus".equals(currConfigOption)) {
+            config.setNumPoints(progress);
+        } else if ("InitDB".equals(currConfigOption)) {
+            config.setInitDb(progress+10);
+            tvConfigValue.setText(Integer.toString(progress+10));
+        }
+        redraw();
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

@@ -12,17 +12,16 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
-import com.vvavy.visiondemo.app.handler.impl.DefaultIntensityHandler;
-import com.vvavy.visiondemo.app.object.Intensity;
-import com.vvavy.visiondemo.app.task.ExamTask;
-import com.vvavy.visiondemo.app.object.Config;
+import com.vvavy.visiondemo.service.PerimetryTestService;
+import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
+import com.vvavy.visiondemo.service.impl.DefaultPerimetryTestServiceImpl;
+import com.vvavy.visiondemo.object.Intensity;
+import com.vvavy.visiondemo.task.ExamTask;
+import com.vvavy.visiondemo.object.Config;
 import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.view.ExamView;
 
-import java.util.List;
 import java.util.Locale;
 
 public class ExamActivity extends Activity {
@@ -31,7 +30,7 @@ public class ExamActivity extends Activity {
 
 
     private Config          config;
-    private PerimetryExam   exam;
+    private PerimetryTestService exam;
 
     private ExamTask        examTask;
     private ExamView        examView;
@@ -63,9 +62,9 @@ public class ExamActivity extends Activity {
         Bundle param = getIntent().getExtras();
         boolean leftEyeExam = param.getBoolean(LEFT_EYE_EXAM, true);
 
-        exam = new DefaultPerimetryExam(config, leftEyeExam?PerimetryExam.ExamType.LEFT:PerimetryExam.ExamType.RIGHT);
+        exam = new DefaultPerimetryTestServiceImpl(config, leftEyeExam? PerimetryTestService.ExamType.LEFT: PerimetryTestService.ExamType.RIGHT);
 
-        Intensity initIntensity = DefaultIntensityHandler.ALL_INTENSITIES[config.getInitDb()];
+        Intensity initIntensity = DefaultIntensityServiceImpl.ALL_INTENSITIES[config.getInitDb()];
         WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = initIntensity.getScreenBrightness();
         getWindow().setAttributes(layout);

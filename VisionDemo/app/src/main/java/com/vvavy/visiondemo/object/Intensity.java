@@ -1,4 +1,4 @@
-package com.vvavy.visiondemo.app.object;
+package com.vvavy.visiondemo.object;
 
 /**
  * Created by qingdi on 3/14/16.

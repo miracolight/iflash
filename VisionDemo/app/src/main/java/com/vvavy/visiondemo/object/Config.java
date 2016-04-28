@@ -1,4 +1,4 @@
-package com.vvavy.visiondemo.app.object;
+package com.vvavy.visiondemo.object;
 
 import android.app.Activity;
 import android.content.Context;

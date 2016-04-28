@@ -1,4 +1,4 @@
-package com.vvavy.visiondemo.client;
+package com.vvavy.visiondemo.network;
 
 import android.content.Context;
 

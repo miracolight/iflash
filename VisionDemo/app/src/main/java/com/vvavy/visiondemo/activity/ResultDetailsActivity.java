@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,13 +12,12 @@ import android.widget.Toast;
 
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.vvavy.visiondemo.R;
-import com.vvavy.visiondemo.app.model.ExamResult;
-import com.vvavy.visiondemo.client.VisionRestClient;
+import com.vvavy.visiondemo.object.ExamResult;
+import com.vvavy.visiondemo.network.VisionRestClient;
 import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.database.entity.PerimetryTest;
 import com.vvavy.visiondemo.util.InternetUtil;
 import com.vvavy.visiondemo.view.ExamResultView;
-import com.vvavy.visiondemo.view.ExamView;
 
 import cz.msebera.android.httpclient.Header;
 

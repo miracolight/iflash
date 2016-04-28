@@ -5,11 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
-import android.view.WindowManager;
 
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.object.Config;
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
+import com.vvavy.visiondemo.service.PerimetryTestService;
+import com.vvavy.visiondemo.object.Config;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 /**
  * Created by qingdi on 3/4/16.
@@ -19,14 +18,14 @@ public class ConfigView extends View{
 
     private Paint paint = new Paint();
 
-    private PerimetryExam   exam;
+    private PerimetryTestService exam;
 
-    public ConfigView(Context context, PerimetryExam exam) {
+    public ConfigView(Context context, PerimetryTestService exam) {
         super(context);
         this.exam = exam;
     }
 
-    public void setExam(PerimetryExam exam) {
+    public void setExam(PerimetryTestService exam) {
         this.exam = exam;
     }
 

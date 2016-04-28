@@ -1,20 +1,16 @@
-package com.vvavy.visiondemo.app.task;
+package com.vvavy.visiondemo.task;
 
-import android.app.ProgressDialog;
 import android.os.Handler;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.vvavy.visiondemo.activity.ExamActivity;
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.model.ExamResult;
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
-import com.vvavy.visiondemo.client.VisionRestClient;
+import com.vvavy.visiondemo.service.PerimetryTestService;
+import com.vvavy.visiondemo.object.ExamResult;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
+import com.vvavy.visiondemo.network.VisionRestClient;
 import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.util.ActivityUtil;
-import com.vvavy.visiondemo.util.InternetUtil;
 import com.vvavy.visiondemo.view.ExamView;
 
 import org.json.JSONException;
@@ -27,14 +23,14 @@ import cz.msebera.android.httpclient.Header;
  */
 public class ExamTask implements Runnable {
     public static final int     STIMULATE_INTERVAL = 800;
-    private PerimetryExam       exam;
+    private PerimetryTestService exam;
     private Handler             uiHandler;
     private ExamView            examView;
     private ExamActivity        examActivity;
     private PerimetryStimulus   currentStimulus = null;
     private boolean             taskDone;
 
-    public ExamTask(ExamActivity examActivity, PerimetryExam exam, Handler uiHandler, ExamView examView) {
+    public ExamTask(ExamActivity examActivity, PerimetryTestService exam, Handler uiHandler, ExamView examView) {
         this.examActivity = examActivity;
         this.exam = exam;
         this.uiHandler = uiHandler;

@@ -12,7 +12,136 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </FrameLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="#80FFFFFF"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal|bottom">
 
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingRight="10dp"
+            android:id="@+id/rlConfigValueGroup">
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:id="@+id/rlConfigValue">
+                <Spinner
+                    android:id="@+id/spnConfigOptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_toRightOf="@id/spnConfigOptions"
+                    android:id="@+id/btnValueMinus"
+                    android:onClick="onMinus"
+                    android:text="-"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="55dp"
+                    android:layout_toRightOf="@id/btnValueMinus"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:id="@+id/tvValue"
+                    android:text="255"/>
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/btnValuePlus"
+                    android:onClick="onPlus"
+                    android:text="+"/>
+            </RelativeLayout>
+            <SeekBar
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rlConfigValue"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:id="@+id/skbConfigValue"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:id="@+id/rlRadioGroup">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:id="@+id/tvDisplay"
+                android:text="Display(ms)"/>
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_toRightOf="@id/tvDisplay"
+                android:layout_alignBottom="@id/tvDisplay"
+                android:gravity="center"
+                android:id="@+id/rgDisplay"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|left"
+                    android:text="100"
+                    android:id="@+id/rb100ms"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|right"
+                    android:text="200"
+                    android:id="@+id/rb200ms"/>
+            </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvDisplay"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:id="@+id/tvNumFixation"
+                android:text="Fixations"/>
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:layout_alignBottom="@id/tvNumFixation"
+                android:layout_alignLeft="@id/rgDisplay"
+                android:gravity="center"
+                android:id="@+id/rgNumFixation"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|left"
+                    android:text="1"
+                    android:id="@+id/rbF1"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|right"
+                    android:text="2"
+                    android:id="@+id/rbF2"/>
+            </RadioGroup>
+        </RelativeLayout>
+    </LinearLayout>
+    <!--
     <LinearLayout
         android:orientation="horizontal"
         android:background="#80FFFFFF"
@@ -141,20 +270,25 @@
                 android:layout_height="wrap_content"  />
         </LinearLayout>
     </LinearLayout>
+    -->
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32sp"
         android:text="@string/reset"
         android:id="@+id/btnReset"
+        android:layout_margin="6dp"
+        android:background="@drawable/btn_background_blue"
         android:layout_alignParentLeft="true"
         android:onClick="onReset" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32sp"
         android:text="@string/save"
         android:id="@+id/btnSave"
+        android:layout_margin="6dp"
         android:layout_alignParentRight="true"
+        android:background="@drawable/btn_background"
         android:onClick="onSave" />
 </RelativeLayout>

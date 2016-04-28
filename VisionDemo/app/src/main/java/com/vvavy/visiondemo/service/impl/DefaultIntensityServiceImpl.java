@@ -1,13 +1,13 @@
-package com.vvavy.visiondemo.app.handler.impl;
+package com.vvavy.visiondemo.service.impl;
 
-import com.vvavy.visiondemo.app.handler.IntensityHandler;
-import com.vvavy.visiondemo.app.object.Intensity;
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
+import com.vvavy.visiondemo.service.IntensityService;
+import com.vvavy.visiondemo.object.Intensity;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 /**
  * Created by qingdi on 3/14/16.
  */
-public class DefaultIntensityHandler implements IntensityHandler {
+public class DefaultIntensityServiceImpl implements IntensityService {
 
     private static final int[][] rawData = {{10, 1000, 237, 255, 255, 55},
             {11, 1000, 254, 221, 255, 55},

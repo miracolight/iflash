@@ -6,25 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.vvavy.visiondemo.R;
 import com.vvavy.visiondemo.adapter.ResultListAdapter;
-import com.vvavy.visiondemo.app.model.ExamResult;
-import com.vvavy.visiondemo.client.VisionRestClient;
+import com.vvavy.visiondemo.object.ExamResult;
+import com.vvavy.visiondemo.network.VisionRestClient;
 import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.database.entity.PerimetryTest;
 import com.vvavy.visiondemo.util.ActivityUtil;
@@ -36,10 +30,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -256,7 +248,7 @@ public class ResultActivity extends Activity {
         final Map<Integer, Integer> serverIds = new HashMap<Integer, Integer>();
         final List<ExamResult> toBeUploaded = new ArrayList<ExamResult>();
         for (ExamResult e : results) {
-            if (e.getServerId() != null) {
+            if (e.getServerId() != null && e.getServerId()>0) {
                 serverIds.put(e.getServerId(), e.getId());
             } else {
                 toBeUploaded.add(e);

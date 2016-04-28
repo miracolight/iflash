@@ -1,15 +1,15 @@
-package com.vvavy.visiondemo.app.exam;
+package com.vvavy.visiondemo.service;
 
 import android.graphics.Point;
 
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 import java.util.List;
 
 /**
  * Created by qingdi on 4/6/16.
  */
-public interface PerimetryExam {
+public interface PerimetryTestService {
 
     public void processStimulus(PerimetryStimulus currentStimulus);
     public int getPromptTime();

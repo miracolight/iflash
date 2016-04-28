@@ -7,10 +7,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.View;
 
-import com.vvavy.visiondemo.app.exam.PerimetryExam;
-import com.vvavy.visiondemo.app.exam.impl.DefaultPerimetryExam;
-import com.vvavy.visiondemo.app.object.Config;
-import com.vvavy.visiondemo.app.object.PerimetryStimulus;
+import com.vvavy.visiondemo.service.PerimetryTestService;
+import com.vvavy.visiondemo.service.impl.DefaultPerimetryTestServiceImpl;
+import com.vvavy.visiondemo.object.Config;
+import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 /**
  * Created by qingdi on 3/4/16.
@@ -23,11 +23,11 @@ public class ExamView extends View{
 
     private PerimetryStimulus stimulus;
 
-    private PerimetryExam   exam;
+    private PerimetryTestService exam;
 
 
 
-    public ExamView(Context context, PerimetryExam exam) {
+    public ExamView(Context context, PerimetryTestService exam) {
         super(context);
         paint.setColor(Color.WHITE);
         paint.setAntiAlias(true);
@@ -48,7 +48,7 @@ public class ExamView extends View{
             //show result;
             for (PerimetryStimulus p : exam.getExamResult()) {
                 paint.setColor(Color.WHITE);
-                paint.setTextSize(DefaultPerimetryExam.RESULT_DISPLAY_SIZE);
+                paint.setTextSize(DefaultPerimetryTestServiceImpl.RESULT_DISPLAY_SIZE);
                 canvas.drawText(Integer.toString(p.getIntensity().getDb())+", ",
                         exam.getStimulusX(p), exam.getStimulusY(p), paint);
             }

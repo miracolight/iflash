@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.vvavy.visiondemo.app.model.ExamResult;
+import com.vvavy.visiondemo.object.ExamResult;
 import com.vvavy.visiondemo.database.entity.PerimetryTest;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.util.TimeUtil;
@@ -16,7 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 /**
  * Created by qingdi on 4/15/16.

@@ -1,4 +1,4 @@
-package com.vvavy.visiondemo.app.object;
+package com.vvavy.visiondemo.object;
 
 import android.graphics.Color;
 import android.graphics.Point;
