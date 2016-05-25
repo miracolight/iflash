@@ -62,7 +62,19 @@ public class DefaultIntensityServiceImpl implements IntensityService {
     public static int MIN_DB = 10;
 
     public static int INIT_DB = 10;
-    public static Intensity[] ALL_INTENSITIES = loadIntensities();
+
+    //public static Intensity[] ALL_INTENSITIES = loadIntensities();
+
+    private Intensity[] allIntensities;
+
+    public static Intensity DUMMY_INTENSITY = new Intensity(10, 1f, 255, 255, 255, 0);
+
+    private String calibrationCode;
+
+    public DefaultIntensityServiceImpl(String calibrationCode, String rawCalibration) {
+        this.calibrationCode = calibrationCode;
+        this.allIntensities = parseIntensities(rawCalibration);
+    }
 
     public static Intensity[] loadIntensities() {
         Intensity[] intensities = new Intensity[MAX_DB+1];
@@ -70,6 +82,35 @@ public class DefaultIntensityServiceImpl implements IntensityService {
         for (int i = 0; i < rawData.length; i++) {
             int db = rawData[i][0];
             intensities[db] = new Intensity(rawData[i][0], rawData[i][1]/1000f, rawData[i][2], rawData[i][3], rawData[i][4], rawData[i][5]);
+        }
+        return intensities;
+    }
+
+    public static String getDefaultCalibrationCode() {
+        return "000-000";
+    }
+
+    public static String getDefaultCalibrationResult() {
+        StringBuilder strBlder = new StringBuilder();
+        for (int i = 0; i < rawData.length; i++) {
+            strBlder.append(rawData[i][0]).append(",")
+                    .append(rawData[i][1]).append(",")
+                    .append(rawData[i][2]).append(",")
+                    .append(rawData[i][3]).append(",")
+                    .append(rawData[i][4]).append(",")
+                    .append(rawData[i][5]).append(";");
+        }
+        return strBlder.toString();
+    }
+
+    private Intensity[] parseIntensities(String rawValues) {
+        String[] rawIntensities = rawValues.split(";");
+        Intensity[] intensities = new Intensity[MAX_DB+1];
+        for (int i = 0; i < rawIntensities.length; i++) {
+            String[] data = rawIntensities[i].split(",");
+            int db = Integer.parseInt(data[0]);
+            intensities[db] = new Intensity(db, Integer.parseInt(data[1])/1000f,
+                    Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), Integer.parseInt(data[5]));
         }
         return intensities;
     }
@@ -92,49 +133,54 @@ public class DefaultIntensityServiceImpl implements IntensityService {
         if (dbStep == 4) {
             if (stimulus.isDetected()) {
                 if (intensity.getDb()+dbStep>MAX_DB) {
-                    stimulus.setIntensity(ALL_INTENSITIES[MAX_DB]);
+                    stimulus.setIntensity(allIntensities[MAX_DB]);
                     stimulus.setDone(true);
                 } else {
-                    intensity = ALL_INTENSITIES[intensity.getDb()+dbStep];
+                    intensity = allIntensities[intensity.getDb()+dbStep];
                     stimulus.setIntensity(intensity);
                 }
             } else {
                 dbStep = dbStep/2;
                 if ((intensity.getDb()-dbStep)<MIN_DB) {
-                    stimulus.setIntensity(ALL_INTENSITIES[MIN_DB]);
+                    stimulus.setIntensity(allIntensities[MIN_DB]);
                     stimulus.setDone(true);
                 } else {
-                    stimulus.setIntensity(ALL_INTENSITIES[intensity.getDb()-dbStep]);
+                    stimulus.setIntensity(allIntensities[intensity.getDb()-dbStep]);
                 }
             }
         } else if (dbStep == 2) {
             dbStep = 1;
             if (stimulus.isDetected()) {
                 if (intensity.getDb()+dbStep>MAX_DB) {
-                    stimulus.setIntensity(ALL_INTENSITIES[MAX_DB]);
+                    stimulus.setIntensity(allIntensities[MAX_DB]);
                     stimulus.setDone(true);
                 } else {
-                    stimulus.setIntensity(ALL_INTENSITIES[intensity.getDb()+dbStep]);
+                    stimulus.setIntensity(allIntensities[intensity.getDb()+dbStep]);
                 }
             } else {
                 if ((intensity.getDb()-dbStep)<MIN_DB) {
-                    stimulus.setIntensity(ALL_INTENSITIES[MIN_DB]);
+                    stimulus.setIntensity(allIntensities[MIN_DB]);
                     stimulus.setDone(true);
                 } else {
-                    stimulus.setIntensity(ALL_INTENSITIES[intensity.getDb()-dbStep]);
+                    stimulus.setIntensity(allIntensities[intensity.getDb()-dbStep]);
                 }
             }
         } else if (dbStep == 1) {
             if (stimulus.isDetected()) {
                 if (intensity.getDb()+dbStep>MAX_DB) {
-                    stimulus.setIntensity(ALL_INTENSITIES[MAX_DB]);
+                    stimulus.setIntensity(allIntensities[MAX_DB]);
                 } else {
-                    stimulus.setIntensity(ALL_INTENSITIES[intensity.getDb()+dbStep]);
+                    stimulus.setIntensity(allIntensities[intensity.getDb()+dbStep]);
                 }
             }
             stimulus.setDone(true);
         }
         stimulus.setDbStep(dbStep);
+    }
+
+    @Override
+    public Intensity getIntensity(int db) {
+        return allIntensities[db];
     }
 
 }

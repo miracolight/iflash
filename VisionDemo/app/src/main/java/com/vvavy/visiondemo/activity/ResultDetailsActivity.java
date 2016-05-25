@@ -3,19 +3,27 @@ package com.vvavy.visiondemo.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.vvavy.visiondemo.R;
+import com.vvavy.visiondemo.object.Config;
 import com.vvavy.visiondemo.object.ExamResult;
 import com.vvavy.visiondemo.network.VisionRestClient;
 import com.vvavy.visiondemo.database.VisionDBSQLiteHelper;
 import com.vvavy.visiondemo.database.entity.PerimetryTest;
+import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
+import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.util.InternetUtil;
 import com.vvavy.visiondemo.view.ExamResultView;
 
@@ -25,8 +33,11 @@ public class ResultDetailsActivity extends Activity {
 
     private VisionDBSQLiteHelper dbHelper;
     private ExamResult  mExamResult;
+    private Config          config;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ActivityUtil.hideStatusBar(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_details);
 
@@ -38,11 +49,31 @@ public class ResultDetailsActivity extends Activity {
 
         dbHelper = VisionDBSQLiteHelper.getInstance(this);
 
+        config = Config.loadConfig(this);
+        mExamResult = dbHelper.getExamResult(resultId, new DefaultIntensityServiceImpl(config.getCalibrationCode(), config.getCalibrationResult()));
 
-        mExamResult = dbHelper.getExamResult(resultId);
+        Point viewSize = mExamResult.getViewSize();
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(viewSize.x, viewSize.y);
+       // ScrollView svResultLayout = ((ScrollView) findViewById(R.id.svResult));
+      //  svResultLayout.setLayoutParams(new RelativeLayout.LayoutParams(
+      //          RelativeLayout.LayoutParams.MATCH_PARENT, viewSize.y));
         ExamResultView examResultView = new ExamResultView(this, mExamResult);
         examResultView.setBackgroundColor(Color.BLACK);
-        ((FrameLayout) findViewById(R.id.frmResult)).addView(examResultView);
+        //examResultView.setLayoutParams(lp);
+        //examResultView.setLayoutParams(
+            //    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        LinearLayout frmResultLayout = ((LinearLayout) findViewById(R.id.frmResult));
+  //      RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) frmResultLayout.getLayoutParams();
+// Changes the height and width to the specified *pixels*
+  //      params.height = params.height*ExamResult.AMPLIFICATION;
+
+  //      frmResultLayout.setLayoutParams(params);
+
+
+      //  frmResultLayout.setLayoutParams(lp);
+        frmResultLayout.addView(examResultView);
 
     }
 

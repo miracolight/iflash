@@ -329,8 +329,8 @@ public class ResultActivity extends Activity {
                                 for (Header h : headers) {
                                     if ("Location".equals(h.getName())) {
                                         String url = h.getValue();
-                                        String serverId = url.substring(url.lastIndexOf("/")).trim();
-                                        f.setServerId(Integer.getInteger(serverId));
+                                        String serverId = url.substring(url.lastIndexOf("/")+1).trim();
+                                        f.setServerId(Integer.valueOf(serverId));
                                         break;
                                     }
                                 }

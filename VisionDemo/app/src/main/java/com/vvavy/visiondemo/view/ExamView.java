@@ -59,7 +59,7 @@ public class ExamView extends View{
             paint.setColor(stimulus.getStimulusColor());
             Point p = stimulus.getPoint();
             canvas.drawCircle(exam.getStimulusX(stimulus),
-                    exam.getStimulusY(stimulus)+p.y, exam.getRadius(), paint);
+                    exam.getStimulusY(stimulus), exam.getRadius(), paint);
         }
         paint.setColor(Color.RED);
         for (Point p : exam.getFixations()) {

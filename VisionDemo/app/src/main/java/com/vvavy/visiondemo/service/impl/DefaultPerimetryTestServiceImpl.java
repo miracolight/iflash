@@ -34,14 +34,14 @@ public class DefaultPerimetryTestServiceImpl implements PerimetryTestService {
     private List<PerimetryStimulus>    resultPoints;
     private int                 currPointIndex;
 
-    private IntensityService intensityHandler = new DefaultIntensityServiceImpl();
+    private IntensityService intensityHandler;
 
     public DefaultPerimetryTestServiceImpl(Config config) {
         this(config, ExamType.RIGHT);
     }
 
     public DefaultPerimetryTestServiceImpl(Config config, ExamType examType) {
-
+        this.intensityHandler = new DefaultIntensityServiceImpl(config.getCalibrationCode(), config.getCalibrationResult());
         this.stimuli = new ArrayList<PerimetryStimulus>();
         this.stimuli.addAll(generatePointsByQuadrant(1, config.getInitDb(), config.getGap()));
         this.stimuli.addAll(generatePointsByQuadrant(2, config.getInitDb(), config.getGap()));
@@ -95,7 +95,7 @@ public class DefaultPerimetryTestServiceImpl implements PerimetryTestService {
             y = -y;
         }
 
-        Intensity defaultIndensity = DefaultIntensityServiceImpl.ALL_INTENSITIES[initDb];
+        Intensity defaultIndensity = getIntensity(initDb);
         stimuli.add(new PerimetryStimulus(new Point(1*x, 1*y), defaultIndensity));
         stimuli.add(new PerimetryStimulus(new Point(1*x, 3*y), defaultIndensity));
         stimuli.add(new PerimetryStimulus(new Point(1*x, 5*y), defaultIndensity));
@@ -188,6 +188,11 @@ public class DefaultPerimetryTestServiceImpl implements PerimetryTestService {
     @Override
     public List<Point> getFixations() {
         return this.fixations;
+    }
+
+    @Override
+    public Intensity getIntensity(int db) {
+        return this.intensityHandler.getIntensity(db);
     }
 
     public boolean isDone() {

@@ -64,7 +64,7 @@ public class ExamActivity extends Activity {
 
         exam = new DefaultPerimetryTestServiceImpl(config, leftEyeExam? PerimetryTestService.ExamType.LEFT: PerimetryTestService.ExamType.RIGHT);
 
-        Intensity initIntensity = DefaultIntensityServiceImpl.ALL_INTENSITIES[config.getInitDb()];
+        Intensity initIntensity = exam.getIntensity(config.getInitDb());
         WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = initIntensity.getScreenBrightness();
         getWindow().setAttributes(layout);

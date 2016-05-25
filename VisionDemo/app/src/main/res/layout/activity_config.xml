@@ -281,6 +281,25 @@
         android:background="@drawable/btn_background_blue"
         android:layout_alignParentLeft="true"
         android:onClick="onReset" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/tvDbValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:textColor="@android:color/holo_green_light"
+            android:layout_centerHorizontal="true"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/refresh"
+            android:onClick="onRefreshCalibration"/>
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"

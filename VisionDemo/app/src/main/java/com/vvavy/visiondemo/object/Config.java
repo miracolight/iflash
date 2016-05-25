@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.view.Display;
 
+import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
+
 import java.util.Random;
 
 /**
@@ -24,6 +26,8 @@ public class Config {
     public static final String  PROP_NAME_PROMPTTIME = "PROMPT_TIME";
     public static final String  PROP_NAME_NUMOFPOINTS = "NUM_OF_POINTS";
     public static final String  PROP_NAME_INITDB = "INIT_DB";
+    public static final String  PROP_NAME_CALIBRATION_CODE = "CALIBRATION_CODE";
+    public static final String  PROP_NAME_CALIBRATION_RESULT = "CALIBRATION_RESULT";
 
     public static final int     DEFAULT_RADIUS = 5;
     public static final int     DEFAULT_GAP = 20;
@@ -31,6 +35,8 @@ public class Config {
     public static final int     DEFAULT_PROMPTTIME = 100; // 100ms
     public static final int     DEFAULT_NUMOFPOINTS = 5;
     public static final int     DEFAULT_INITDB = 10;
+    public static final String  DEFAULT_CALIBRATION_CODE = DefaultIntensityServiceImpl.getDefaultCalibrationCode();
+    public static final String  DEFAULT_CALIBRATION_RESULT = DefaultIntensityServiceImpl.getDefaultCalibrationResult();
 
     public static final int     MAX_GREY = 0xFF;
     public static final int     MAX_ALPHA = 0xFF;
@@ -41,10 +47,12 @@ public class Config {
 
     private int centerLeftX, centerRightX, centerY;
     private int radius, gap, numPoints, numFixations, promptTime, initDb;
+    private String calibrationCode, calibrationResult;
 
 
     private Config (int centerLeftX, int centerRightX, int centerY, int numFixations,
-                    int promptTime, int radius, int gap, int numPoints, int initDb) {
+                    int promptTime, int radius, int gap, int numPoints, int initDb,
+                    String calibrationCode, String calibrationResult) {
         this.centerLeftX = centerLeftX;
         this.centerRightX = centerRightX;
         this.centerY = centerY;
@@ -54,7 +62,8 @@ public class Config {
         this.gap = gap;
         this.numPoints = numPoints;
         this.initDb = initDb;
-
+        this.calibrationCode = calibrationCode;
+        this.calibrationResult = calibrationResult;
     }
 
     public int getCenterLeftX() {
@@ -129,6 +138,22 @@ public class Config {
         this.initDb = initDb;
     }
 
+    public String getCalibrationCode() {
+        return calibrationCode;
+    }
+
+    public void setCalibrationCode(String calibrationCode) {
+        this.calibrationCode = calibrationCode;
+    }
+
+    public String getCalibrationResult() {
+        return calibrationResult;
+    }
+
+    public void setCalibrationResult(String calibrationResult) {
+        this.calibrationResult = calibrationResult;
+    }
+
     public static Config loadConfig(Activity activity) {
         SharedPreferences sharedPref = activity.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
@@ -141,7 +166,9 @@ public class Config {
                                    sharedPref.getInt(PROP_NAME_RADIUS, DEFAULT_RADIUS),
                                    sharedPref.getInt(PROP_NAME_GAP, DEFAULT_GAP),
                                    sharedPref.getInt(PROP_NAME_NUMOFPOINTS, DEFAULT_NUMOFPOINTS),
-                                   sharedPref.getInt(PROP_NAME_INITDB, DEFAULT_INITDB));
+                                   sharedPref.getInt(PROP_NAME_INITDB, DEFAULT_INITDB),
+                                   sharedPref.getString(PROP_NAME_CALIBRATION_CODE, DEFAULT_CALIBRATION_CODE),
+                                   sharedPref.getString(PROP_NAME_CALIBRATION_RESULT, DEFAULT_CALIBRATION_RESULT) );
         return config;
     }
 
@@ -166,6 +193,14 @@ public class Config {
         editor.putInt(PROP_NAME_RADIUS, radius);
         editor.putInt(PROP_NAME_NUMOFPOINTS, numPoints);
         editor.putInt(PROP_NAME_INITDB, initDb);
+        editor.commit();
+    }
+
+    public void saveCalibrationConfig(Activity activity) {
+        SharedPreferences sharedPref = activity.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(PROP_NAME_CALIBRATION_CODE, calibrationCode);
+        editor.putString(PROP_NAME_CALIBRATION_RESULT, calibrationResult);
         editor.commit();
     }
 

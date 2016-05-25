@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.vvavy.visiondemo.object.ExamResult;
 import com.vvavy.visiondemo.database.entity.PerimetryTest;
+import com.vvavy.visiondemo.service.IntensityService;
+import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
 import com.vvavy.visiondemo.util.ActivityUtil;
 import com.vvavy.visiondemo.util.TimeUtil;
 
@@ -127,6 +129,8 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         values.put(PerimetryTest.KEY_TEST_DATE, examResult.getExamDate());
         values.put(PerimetryTest.KEY_RESULT, examResult.getResult()); // get result
         values.put(PerimetryTest.KEY_UPLOADED, examResult.getUploaded());
+        values.put(PerimetryTest.KEY_SERVER_TEST_ID, examResult.getServerId());
+
 
         // 3. update
         String strFilter = "test_id=?";
@@ -136,7 +140,7 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ExamResult getExamResult(int id){
+    public ExamResult getExamResult(int id,  IntensityService intensityService){
 
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
@@ -164,6 +168,7 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         examResult.setResult(cursor.getString(3));
         examResult.setUploaded(cursor.getString(4));
         examResult.setServerId(cursor.getInt(6));
+        examResult.setIntensityService(intensityService);
         Log.d("getExamResult("+id+")", examResult.toString());
 
         // 5. return examResult

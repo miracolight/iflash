@@ -2,6 +2,7 @@ package com.vvavy.visiondemo.object;
 
 import android.graphics.Point;
 
+import com.vvavy.visiondemo.service.IntensityService;
 import com.vvavy.visiondemo.service.PerimetryTestService;
 import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
 
@@ -21,6 +22,9 @@ public class ExamResult {
     private String  uploaded;
     private Integer     serverId;
     private String  testDeviceId;
+
+    private IntensityService intensityService;
+    private List<PerimetryStimulus> permetryStimulus;
 
     public ExamResult() {
     }
@@ -49,6 +53,31 @@ public class ExamResult {
     }
 
     public List<PerimetryStimulus> getPerimetryStimulus() {
+        if (permetryStimulus == null) {
+            permetryStimulus = parserResult();
+        }
+        return permetryStimulus;
+    }
+
+    public Point getViewSize() {
+        if (permetryStimulus == null) {
+            permetryStimulus = parserResult();
+        }
+
+        int maxX=0, maxY=0;
+        for (PerimetryStimulus p : permetryStimulus) {
+            if (maxX < p.getPoint().x) {
+                maxX = p.getPoint().x;
+            }
+            if (maxY < p.getPoint().y) {
+                maxY = p.getPoint().y;
+            }
+        }
+        return new Point(maxX, maxY);
+    }
+
+    private List<PerimetryStimulus> parserResult() {
+
         List<PerimetryStimulus> r = new ArrayList<PerimetryStimulus>();
         String[] data = this.result.split(";");
         String[] center = data[0].split(":");
@@ -58,8 +87,10 @@ public class ExamResult {
         for(String ps : data[1].split(",")) {
             String[] v = ps.split(":");
             PerimetryStimulus p = new PerimetryStimulus(new Point(centerX+Integer.parseInt(v[1])*AMPLIFICATION,
-                                                                  centerY+Integer.parseInt(v[2])*AMPLIFICATION),
-                                DefaultIntensityServiceImpl.ALL_INTENSITIES[Integer.parseInt(v[0])]);
+                    centerY+Integer.parseInt(v[2])*AMPLIFICATION),
+                    (intensityService==null?
+                    DefaultIntensityServiceImpl.DUMMY_INTENSITY:intensityService.getIntensity(Integer.parseInt(v[0])))
+            );
             r.add(p);
         }
         return r;
@@ -120,6 +151,14 @@ public class ExamResult {
 
     public void setServerId(Integer serverId) {
         this.serverId = serverId;
+    }
+
+    public IntensityService getIntensityService() {
+        return intensityService;
+    }
+
+    public void setIntensityService(IntensityService intensityService) {
+        this.intensityService = intensityService;
     }
 
     @Override

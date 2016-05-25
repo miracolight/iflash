@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 
+import com.vvavy.visiondemo.object.Intensity;
 import com.vvavy.visiondemo.service.PerimetryTestService;
 import com.vvavy.visiondemo.object.Config;
 import com.vvavy.visiondemo.object.PerimetryStimulus;
@@ -47,4 +48,12 @@ public class ConfigView extends View{
         canvas.drawCircle(exam.getCenterRightX(), exam.getCenterY(), Config.CENTER_RADIUS, paint);
     }
 
+    public String getCurrentDBValue() {
+        StringBuilder strBlder = new StringBuilder();
+        Intensity i = exam.getStimuli().get(0).getIntensity();
+        strBlder.append("Screen:").append(i.getScreenBrightness()).append("; ")
+                .append("Bg:").append(i.getBgAlpha()).append(",").append(i.getBgGreyscale()).append("; ")
+                .append("Stimuli:").append(i.getStimulusAlpha()).append(",").append(i.getStimulusGreyscale()).append("; ");
+        return strBlder.toString();
+    }
 }

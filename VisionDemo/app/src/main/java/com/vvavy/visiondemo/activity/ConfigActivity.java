@@ -1,6 +1,8 @@
 package com.vvavy.visiondemo.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -16,13 +18,31 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.vvavy.visiondemo.R;
+import com.vvavy.visiondemo.network.VisionRestClient;
+import com.vvavy.visiondemo.object.ExamResult;
+import com.vvavy.visiondemo.service.PerimetryTestService;
 import com.vvavy.visiondemo.service.impl.DefaultIntensityServiceImpl;
 import com.vvavy.visiondemo.service.impl.DefaultPerimetryTestServiceImpl;
 import com.vvavy.visiondemo.object.Config;
 import com.vvavy.visiondemo.util.ActivityUtil;
+import com.vvavy.visiondemo.util.InternetUtil;
 import com.vvavy.visiondemo.view.ConfigView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ConfigActivity extends Activity implements AdapterView.OnItemSelectedListener, SeekBar.OnSeekBarChangeListener {
 
@@ -35,6 +55,7 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
     private TextView        tvConfigValue;
     private Point           screenDisplaySize;
     private String          currConfigOption;
+    private TextView        tvDbValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +81,6 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
 
 
         screenDisplaySize = config.getDisplaySize(this);
-        tvConfigValue = (TextView)findViewById(R.id.tvValue);
 
         Spinner spinner = (Spinner) findViewById(R.id.spnConfigOptions);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -80,6 +100,8 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
         skbConfigValue.setMax(screenDisplaySize.x/2);
         skbConfigValue.setOnSeekBarChangeListener(this);
 
+
+        tvConfigValue = (TextView)findViewById(R.id.tvValue);
         tvConfigValue.setText(Integer.toString(skbConfigValue.getProgress()));
 
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rgNumFixation);
@@ -117,6 +139,9 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
                 }
             }
         });
+
+        tvDbValue = (TextView)findViewById(R.id.tvDbValue);
+        tvDbValue.setText(configView.getCurrentDBValue());
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -125,10 +150,14 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
 
     private void redraw() {
         WindowManager.LayoutParams layout = getWindow().getAttributes();
-        layout.screenBrightness = DefaultIntensityServiceImpl.ALL_INTENSITIES[config.getInitDb()].getScreenBrightness();
+
+        PerimetryTestService newTest = new DefaultPerimetryTestServiceImpl(config);
+        layout.screenBrightness = newTest.getIntensity(config.getInitDb()).getScreenBrightness();
         getWindow().setAttributes(layout);
         configView.setExam(new DefaultPerimetryTestServiceImpl(config));
         configView.invalidate();
+
+        tvDbValue.setText(config.getCalibrationCode()+": "+configView.getCurrentDBValue());
      //   resetSetting();
     }
 
@@ -186,7 +215,7 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
     private void onButtonUpdate(int delta) {
         int currValue = Integer.parseInt(tvConfigValue.getText().toString());
         int newValue = currValue+delta;
-        if (newValue<0) {
+        if (newValue<0 || ("InitDB".equals(currConfigOption) && newValue<10)) {
             return;
         }
         if ("CenterX".equals(currConfigOption)) {
@@ -216,9 +245,9 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
                 tvConfigValue.setText(Integer.toString(newValue));
             }
         } else if ("InitDB".equals(currConfigOption)) {
-            if (newValue <=30) {
-                config.setInitDb(newValue+10);
-                tvConfigValue.setText(Integer.toString(newValue+10));
+            if (newValue <=40) {
+                config.setInitDb(newValue);
+                tvConfigValue.setText(Integer.toString(newValue));
             }
         }
         redraw();
@@ -282,5 +311,48 @@ public class ConfigActivity extends Activity implements AdapterView.OnItemSelect
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    public void onRefreshCalibration(View v) {
+        if (!InternetUtil.isNetworkAvailable(this)) {
+            Toast.makeText(ConfigActivity.this, "No internet connection. ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while downloading...");
+        progress.show();
+
+        String url = "calibrations/latest?apiKey=rock2016";
+        // trigger the network request
+        VisionRestClient.get(url, null, new JsonHttpResponseHandler() {
+            // define the success and failure callbacks
+            // handle the successful response (popular photos JSON)
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject response) {
+                System.out.println("statusCode = " + statusCode);
+                progress.dismiss();
+                t.printStackTrace();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONArray photosJSON = null;
+                try {
+                    String code = response.getString("code");
+                    long lastUpdateDate = response.getLong("lastUpdateDate");
+                    String result = response.getString("result");
+                    config.setCalibrationCode(code+"-"+(lastUpdateDate/1000)%1000);
+                    config.setCalibrationResult(result);
+                    config.saveCalibrationConfig(ConfigActivity.this);
+                    progress.dismiss();
+                    redraw();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

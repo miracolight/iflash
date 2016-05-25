@@ -2,6 +2,7 @@ package com.vvavy.visiondemo.service;
 
 import android.graphics.Point;
 
+import com.vvavy.visiondemo.object.Intensity;
 import com.vvavy.visiondemo.object.PerimetryStimulus;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface PerimetryTestService {
     public int getStimulusY(PerimetryStimulus s);
 
     public List<Point> getFixations();
+
+    public Intensity getIntensity(int db);
 
     public enum ExamType {
         LEFT, RIGHT
