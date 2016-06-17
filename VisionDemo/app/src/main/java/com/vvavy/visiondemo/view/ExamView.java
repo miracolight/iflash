@@ -25,6 +25,7 @@ public class ExamView extends View{
 
     private PerimetryTestService exam;
 
+    private int secondsToStart = 0;
 
 
     public ExamView(Context context, PerimetryTestService exam) {
@@ -61,12 +62,25 @@ public class ExamView extends View{
             canvas.drawCircle(exam.getStimulusX(stimulus),
                     exam.getStimulusY(stimulus), exam.getRadius(), paint);
         }
-        paint.setColor(Color.RED);
-        for (Point p : exam.getFixations()) {
-            canvas.drawCircle(p.x, p.y, Config.getCenterRadius(), paint);
+
+        if (secondsToStart > 0) {
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(DefaultPerimetryTestServiceImpl.RESULT_DISPLAY_SIZE);
+            int x = (exam.getExamType() == PerimetryTestService.ExamType.LEFT)?
+                            exam.getCenterLeftX():exam.getCenterRightX();
+            int y = exam.getCenterY();
+            canvas.drawText(Integer.toString(secondsToStart), x, y, paint);
+        } else {
+            paint.setColor(Color.RED);
+            for (Point p : exam.getFixations()) {
+                canvas.drawCircle(p.x, p.y, Config.getCenterRadius(), paint);
+            }
         }
 
     }
 
 
+    public void setSecondsToStart(int secondsToStart) {
+        this.secondsToStart = secondsToStart;
+    }
 }

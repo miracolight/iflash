@@ -3,11 +3,14 @@ package com.vvavy.visiondemo.activity;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -24,7 +27,7 @@ import com.vvavy.visiondemo.view.ExamView;
 
 import java.util.Locale;
 
-public class ExamActivity extends Activity {
+public class ExamActivity extends Activity implements View.OnTouchListener {
 
     public static final String LEFT_EYE_EXAM = "LEFT_EYE_EXAM";
 
@@ -89,21 +92,7 @@ public class ExamActivity extends Activity {
     public boolean onTouchEvent(MotionEvent event){
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if (examTask == null) {
-                    tts.speak("countdown. three. two. one.", TextToSpeech.QUEUE_FLUSH, null);
-
-                    while (tts.isSpeaking() ) {
-                    };
-
-                    examTask = new ExamTask(this, exam, uiHandler, examView);
-                    Thread t = new Thread(examTask);
-                    t.start();
-                } else if (!examTask.isTaskDone()){
-                    examTask.setCurrentStimulusDetected();
-                } else {
-                    examTask.saveResult(dbHelper);
-                    finish();
-                }
+                handleKeyTouchEvent();
                 break;
         }
         return super.onTouchEvent(event) ;
@@ -128,4 +117,42 @@ public class ExamActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    // handle the press of "D" (volume_up) on VR bluetooth controller
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+            handleKeyTouchEvent();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void handleKeyTouchEvent() {
+        if (examTask == null) {
+            //http://stackoverflow.com/questions/8857590/android-countdowntimer-skips-last-ontick
+            new CountDownTimer(4000, 900) {
+                public void onTick(long millisUntilFinished) {
+                    examView.setSecondsToStart(Math.round(millisUntilFinished/1000f)-1);
+                    examView.invalidate();
+                }
+
+                public void onFinish() {
+                    examView.setSecondsToStart(0);
+                    examTask = new ExamTask(ExamActivity.this, exam, uiHandler, examView);
+                    Thread t = new Thread(examTask);
+                    t.start();
+                }
+            }.start();
+        } else if (!examTask.isTaskDone()){
+            examTask.setCurrentStimulusDetected();
+        } else {
+            examTask.saveResult(dbHelper);
+            finish();
+        }
+    }
 }

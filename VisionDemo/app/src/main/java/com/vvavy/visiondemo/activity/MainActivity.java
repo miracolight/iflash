@@ -3,12 +3,14 @@ package com.vvavy.visiondemo.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 
 import com.vvavy.visiondemo.R;
-
 
 public class MainActivity extends Activity {
 
@@ -17,10 +19,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
     }
 
     public void onConfig(View v) {
@@ -37,6 +35,10 @@ public class MainActivity extends Activity {
 
 
     public void onExamLeft(View v) {
+        examLeftEye();
+    }
+
+    private void examLeftEye() {
         Intent i = new Intent(this, ExamActivity.class);
         Bundle param = new Bundle();
         param.putBoolean(ExamActivity.LEFT_EYE_EXAM, true);
@@ -45,6 +47,10 @@ public class MainActivity extends Activity {
     }
 
     public void onExamRight(View v) {
+        examRightEye();
+    }
+
+    private void examRightEye() {
         Intent i = new Intent(this, ExamActivity.class);
         Bundle param = new Bundle();
         param.putBoolean(ExamActivity.LEFT_EYE_EXAM, false);
@@ -71,4 +77,30 @@ public class MainActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    // handle the press of "B" on VR bluetooth controller
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent. KEYCODE_ESCAPE)){
+            // Exam the left eye when "B" is pressed
+            examLeftEye();
+            return true;
+        } else {
+            System.out.println("onKeyDown -- keyCode="+keyCode);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    // handle the press of "A" on VR bluetooth controller
+    public boolean onTouchEvent(MotionEvent event){
+        System.out.println("onTouchEvent -- "+event.toString());
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                // when "A" is pressed, exam the right eye
+                examRightEye();
+                break;
+        }
+        return super.onTouchEvent(event) ;
+    }
+
 }
