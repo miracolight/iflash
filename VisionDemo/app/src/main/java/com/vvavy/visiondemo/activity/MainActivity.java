@@ -9,16 +9,23 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.vvavy.visiondemo.R;
 
 public class MainActivity extends Activity {
 
+    private TextView tvUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tvUserName = (TextView)findViewById(R.id.tvUserName);
     }
 
     public void onConfig(View v) {
@@ -32,6 +39,7 @@ public class MainActivity extends Activity {
         Intent i = new Intent(this, ResultActivity.class);
         startActivity(i);
     }
+
 
 
     public void onExamLeft(View v) {
@@ -103,4 +111,25 @@ public class MainActivity extends Activity {
         return super.onTouchEvent(event) ;
     }
 
+
+    public void onScan(View view) {
+        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+        scanIntegrator.initiateScan();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+        if (scanningResult != null) {
+            String scanContent = scanningResult.getContents();
+            String scanFormat = scanningResult.getFormatName();
+
+            tvUserName.setText(scanContent);
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "No scan data received!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+    }
 }
