@@ -6,6 +6,7 @@ import com.tongchuang.perimetrypro.perimetry.exam.impl.DefaultExamTaskImpl;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.pattern.PatternGeneratorFactory;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
+import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
 import com.tongchuang.perimetrypro.util.ExamUtil;
 
 import java.lang.reflect.Constructor;
@@ -43,10 +44,16 @@ public class ExamTaskBuilder {
         }
 
         exam.setStimulusRunners(stimulusRunners);
+
         exam.setPositionPoints(positionPoints);
 
         exam.setExamTaskListeners(examTaskListeners);
         exam.setExamSettings(examSettings);
+
+        Constructor stimulusSelectorConstructor = Class.forName(examSettings.getStimulusSelectorClass())
+                .getConstructor(ExamTask.class);
+        StimulusSelector s = (StimulusSelector)stimulusSelectorConstructor.newInstance(exam);
+        exam.setStimulusSelector(s);
 
         return exam;
     }

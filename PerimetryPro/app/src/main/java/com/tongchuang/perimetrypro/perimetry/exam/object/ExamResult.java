@@ -1,6 +1,7 @@
 package com.tongchuang.perimetrypro.perimetry.exam.object;
 
 
+import com.google.gson.Gson;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
@@ -18,13 +19,16 @@ public class ExamResult {
     public static final int AMPLIFICATION=3;
     private int     id;
     private String  patientId;
-    private String  result;
     private long    examDate;
     private String  uploaded;
     private Integer     serverId;
     private String  testDeviceId;
 
-    private ExamSettings examSettings;
+    private String  deviceSettingsVersion;
+    private String  patientSettingsVersion;
+
+    private ExamSettings.EXAM_FIELD_OPTION examFieldOption;
+
     private Map<String, String> examResult;
     private Map<String, List<StimulusResponse>> allResponses;
 
@@ -35,16 +39,17 @@ public class ExamResult {
         super();
         this.patientId = patientId;
         this.examDate = examDate;
-        this.result = result;
         this.uploaded = uploaded;
     }
 
     public ExamResult(ExamTask exam) {
-        this.patientId = DUMMY_PATIENT_ID;
         this.examDate = System.currentTimeMillis();
         this.uploaded = "N";
 
-        this.examSettings = exam.getExamSettings();
+        this.deviceSettingsVersion = exam.getExamSettings().getDeviceSettingsVersion();
+        this.patientSettingsVersion = exam.getExamSettings().getPatientSettingsVersion();
+        this.examFieldOption = exam.getExamSettings().getExamFieldOption();
+
         examResult = new HashMap<String, String>();
         allResponses = new HashMap<String, List<StimulusResponse>>();
         List<StimulusRunner> runners = exam.getStimulusRunners();
@@ -80,14 +85,6 @@ public class ExamResult {
         this.examDate = examDate;
     }
 
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
     public String getUploaded() {
         return uploaded;
     }
@@ -112,13 +109,16 @@ public class ExamResult {
         this.serverId = serverId;
     }
 
+    public String toJSon() {
+        Gson gson = new Gson();
+        return gson.toJson(this, ExamResult.class);
+    }
 
     @Override
     public String toString() {
         return "ExamResult{" +
                 "id=" + id +
                 ", patientId='" + patientId + '\'' +
-                ", result='" + result + '\'' +
                 ", examDate=" + examDate +
                 ", uploaded='" + uploaded + '\'' +
                 ", serverId=" + serverId +

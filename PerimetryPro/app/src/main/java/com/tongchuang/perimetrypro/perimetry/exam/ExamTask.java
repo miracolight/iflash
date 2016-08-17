@@ -44,5 +44,6 @@ public interface ExamTask extends Runnable{
     
     public List<StimulusRunner> getStimulusRunners();
 
+    public StimulusRunner getCurrentStimulusRunner();
     public StimulusInstance getCurrentStimulusInstance();
 }

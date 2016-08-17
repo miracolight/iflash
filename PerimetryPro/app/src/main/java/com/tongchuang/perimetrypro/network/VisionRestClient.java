@@ -18,7 +18,7 @@ import cz.msebera.android.httpclient.protocol.HTTP;
  * Created by qingdi on 4/19/16.
  */
 public class VisionRestClient {
-    private static final String BASE_URL = "http://localhost:8080/";
+    private static final String BASE_URL = "http://121.40.177.67:8190/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

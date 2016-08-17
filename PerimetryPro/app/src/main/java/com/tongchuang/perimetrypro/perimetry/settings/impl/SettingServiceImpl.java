@@ -41,7 +41,7 @@ public class SettingServiceImpl implements SettingService {
             String url = "/devices/"+deviceId+"/examsettings?apiKey=rock2016";
             VisionRestClient.get(url, null, new JsonHttpResponseHandler() {
                 @Override
-                public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                public void onFailure(int statusCode, Header[] headers, Throwable t, org.json.JSONObject response) {
                     t.printStackTrace();
                     responseHandler.onDeviceSettingFailure(deviceSettingsCached);
                 }
@@ -68,7 +68,7 @@ public class SettingServiceImpl implements SettingService {
                 String url = "/defaults/examsettings?apiKey=rock2016";
                 VisionRestClient.get(url, null, new JsonHttpResponseHandler() {
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                    public void onFailure(int statusCode, Header[] headers, Throwable t, org.json.JSONObject response) {
                         t.printStackTrace();
                         responseHandler.onPatientSettingFailure(defaultPatientSettingsCached);
                     }
@@ -84,13 +84,13 @@ public class SettingServiceImpl implements SettingService {
             }
 
         } else if (userInfo.getPatientId() != null) {
-            String url = "/patients/"+userInfo.getPatientId()+"/examsettings?apiKey=rock2016";
+            String url = "/patients/"+userInfo.getPatientId()+"/examsettings?examCode=PERIMETRY&apiKey=rock2016";
             // trigger the network request
             VisionRestClient.get(url, null, new JsonHttpResponseHandler() {
                 // define the success and failure callbacks
                 // handle the successful response (popular photos JSON)
                 @Override
-                public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                public void onFailure(int statusCode, Header[] headers, Throwable t, org.json.JSONObject response) {
                     t.printStackTrace();
                     responseHandler.onPatientSettingFailure(null);
                 }

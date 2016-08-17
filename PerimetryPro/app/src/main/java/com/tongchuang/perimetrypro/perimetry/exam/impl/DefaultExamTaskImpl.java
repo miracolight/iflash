@@ -53,10 +53,19 @@ public class DefaultExamTaskImpl implements ExamTask {
 
         fixations = Collections.singletonList(examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
                                 examSettings.getLeftFixation():examSettings.getRightFixation());
-        centerX = (examSettings.getLeftFixation().x+examSettings.getRightFixation().x)/2;
-        centerY = (examSettings.getLeftFixation().y+examSettings.getRightFixation().y)/2;
+        centerX = examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
+                        examSettings.getLeftFixation().x:examSettings.getRightFixation().x;
+        centerY = examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
+                        examSettings.getLeftFixation().y:examSettings.getRightFixation().y;
     }
 
+    public StimulusSelector getStimulusSelector() {
+        return stimulusSelector;
+    }
+
+    public void setStimulusSelector(StimulusSelector stimulusSelector) {
+        this.stimulusSelector = stimulusSelector;
+    }
 
     public Map<String, Point> getPositionPoints() {
         return positionPoints;
@@ -98,7 +107,7 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     @Override
     public Intensity getDefaultIntensity() {
-        return null;
+        return examSettings.getIntensities().get(maxStimulusDB);
     }
 
     @Override
@@ -127,6 +136,10 @@ public class DefaultExamTaskImpl implements ExamTask {
         return stimulusRunners;
     }
 
+    public StimulusRunner getCurrentStimulusRunner() {
+        return currentStimulus;
+    }
+
     @Override
     public StimulusInstance getCurrentStimulusInstance() {
         int stimulusDB = currentStimulus.getCurrentStimulusDB();
@@ -138,7 +151,7 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     @Override
     public ExamSettings getExamSettings() {
-        return null;
+        return examSettings;
     }
 
     @Override

@@ -129,6 +129,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     public void saveResult(VisionDBSQLiteHelper dbHelper) {
         ExamResult result = new ExamResult(exam);
         String deviceId = GlobalContext.getDeviceId();
+        result.setPatientId(GlobalContext.getUserInfo().getPatientId().toString());
         result.setTestDeviceId(deviceId);
         dbHelper.addExamResult(result);
         saveToServer(result, dbHelper);
@@ -143,7 +144,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
         try {
 
             jsonObject.put("patientId", result.getPatientId());
-            jsonObject.put("result", result.getResult());
+            jsonObject.put("result", result.toJSon());
             jsonObject.put("testDate", result.getExamDate());
             jsonObject.put("testDeviceId", result.getTestDeviceId());
             jsonObject.put("origClientTestId", result.getId());
@@ -182,23 +183,33 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public void onStimulusChange() {
-        StimulusInstance currentStimulus = exam.getCurrentStimulusInstance();
-        if (currentStimulus != null) {
-            WindowManager.LayoutParams layout = getWindow().getAttributes();
-            layout.screenBrightness = currentStimulus.getIntensity().getScreenBrightness();
-            System.out.println("screenbrightness="+layout.screenBrightness);
-            getWindow().setAttributes(layout);
-        }
+        runOnUiThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              StimulusInstance currentStimulus = exam.getCurrentStimulusInstance();
+                              if (currentStimulus != null) {
+                                  WindowManager.LayoutParams layout = getWindow().getAttributes();
+                                  layout.screenBrightness = currentStimulus.getIntensity().getScreenBrightness();
+                                  getWindow().setAttributes(layout);
+                              }
 
 
-        examView.invalidate();
+                              examView.invalidate();
+                          }
+                      });
+
     }
 
     @Override
     public void onExamTaskDone() {
-        examView.invalidate();
-        saveResult(dbHelper);
-        finish();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                examView.invalidate();
+                saveResult(dbHelper);
+                finish();
+            }
+        });
 
     }
 

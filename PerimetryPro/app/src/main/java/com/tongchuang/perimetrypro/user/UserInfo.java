@@ -6,41 +6,45 @@ package com.tongchuang.perimetrypro.user;
 public class UserInfo {
     public static enum Role {ADMIN, DOCTOR, PATIENT};
 
-    private int     userId;
-    private Role    userRole;
+    private Integer     userId;
+    private Role        role;
+    private Integer     subjectId;
 
-    private Integer patientId;
-    private Integer doctorId;
-
-    public Integer getDoctorId() {
-        return doctorId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setDoctorId(Integer doctorId) {
-        this.doctorId = doctorId;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    public Integer getPatientId() {
-        return patientId;
+    public Integer getSubjectId() {
+        return subjectId;
     }
 
-    public void setPatientId(Integer patientId) {
-        this.patientId = patientId;
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public Role getUserRole() {
-        return userRole;
+    public Integer getDoctorId() {
+        if (role == Role.DOCTOR) {
+            return subjectId;
+        }
+        return null;
     }
 
-    public void setUserRole(Role userRole) {
-        this.userRole = userRole;
+    public Integer getPatientId() {
+        if (role == Role.PATIENT) {
+            return subjectId;
+        }
+        return null;
     }
 }

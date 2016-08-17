@@ -6,6 +6,7 @@ import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
     private int currLevel = Integer.MAX_VALUE;
     private int maxLevel = Integer.MIN_VALUE;
     public DefaultStimulusSelectorImpl(ExamTask examTask) {
+        stimulusRunnersByPriorities = new HashMap<Integer, List<StimulusRunner>>();
         ExamSettings examSettings = examTask.getExamSettings();
         Map<String, Integer> priorities = examSettings.getStimulusPriorities();
         List<StimulusRunner> runners = examTask.getStimulusRunners();
@@ -51,6 +53,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
         while (currLevel <= maxLevel) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);
+            System.out.println("aimu_log: level="+currLevel+"; runners.size()="+runners.size());
             if (runners != null && !runners.isEmpty()) {
                 runner = runners.get(getRandomIndex(runners.size()));
                 break;

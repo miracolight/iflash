@@ -72,7 +72,7 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
     @Override
     public void processs() {
         StimulusResponse lastResponse = null;
-        int nextStimulusDB;
+        int nextStimulusDB = stimulusDB;
 
         boolean finish = false;
 
@@ -102,7 +102,6 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
                         finalResult = Integer.toString(stimulusDB - 1);
                     }
                 }
-                allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
                 finish();
             } else {
                 if (stimulusDetected) {
@@ -129,8 +128,14 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
             }
         }
 
+        System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
+        allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
+        stimulusDB = nextStimulusDB;
+
+
         if (state == STATE.STOPPED) {
             state = STATE.READY;
+            stimulusDetected = false;
         }
     }
 

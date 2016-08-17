@@ -18,12 +18,15 @@ public class ExamUtil {
 
         Matcher m = POS_CODE_PATTERN.matcher(posCode);
 
+        if (!m.find()) {
+            throw new RuntimeException("matcher not found!");
+        }
         int quad = Integer.parseInt(m.group(1));
         int row = Integer.parseInt(m.group(2));
         int col = Integer.parseInt(m.group(3));
 
-        int x = (int)((col-1)+0.5)*examSettings.getStimulusSpacing();
-        int y = (int)((row-1)+0.5)*examSettings.getStimulusSpacing();
+        int x = (int)(((col-1)+0.5)*examSettings.getStimulusSpacing());
+        int y = (int)(((row-1)+0.5)*examSettings.getStimulusSpacing());
         if (quad == 2) {
             x = -x;
         } else if (quad == 3) {
@@ -37,5 +40,6 @@ public class ExamUtil {
         y += examSettings.getLeftFixation().y;
         return new Point(x, y);
     }
+
 
 }

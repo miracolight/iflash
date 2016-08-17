@@ -1,6 +1,5 @@
 package com.tongchuang.perimetrypro.perimetry.settings;
 
-import android.bluetooth.BluetoothClass;
 import android.graphics.Point;
 
 import com.tongchuang.perimetrypro.perimetry.common.Intensity;
@@ -25,6 +24,14 @@ public class ExamSettings {
     public ExamSettings(DeviceSettings deviceSettings, PatientSettings patientSettings) {
         this.deviceSettings = deviceSettings;
         this.patientSettings = patientSettings;
+    }
+
+    public String getDeviceSettingsVersion() {
+        return deviceSettings.getVersion();
+    }
+
+    public String getPatientSettingsVersion() {
+        return patientSettings.getVersion();
     }
 
     public Integer getFixationRadius() {
@@ -61,11 +68,12 @@ public class ExamSettings {
     }
 
     public Map<String, Integer> getInitStimulusDB() {
-        return patientSettings.getInitStimulusDB();
+        return examFieldOption==EXAM_FIELD_OPTION.LEFT?
+                patientSettings.getInitStimulusDBLeft():patientSettings.getInitStimulusDBRight();
     }
 
     public String getStimulusRunnerClass() {
-        return patientSettings.getStimulusHandlerClass();
+        return patientSettings.getStimulusRunnerClass();
     }
 
     public String getStimulusSelectorClass() {
@@ -85,7 +93,8 @@ public class ExamSettings {
     }
 
     public Map<String, Integer> getStimulusPriorities() {
-        return patientSettings.getStimulusPriorities();
+        return examFieldOption==EXAM_FIELD_OPTION.LEFT?
+                patientSettings.getStimulusPrioritiesLeft():patientSettings.getStimulusPrioritiesRight();
     }
 
     public int getTextDisplaySize() {

@@ -24,17 +24,17 @@ public class UserServiceImpl implements UserService {
     private Gson gson = new Gson();
 
     @Override
-    public void getUserInfo(String userId, final UserServiceResponseHandler responseHandler) {
+    public void getUserInfo(String barCode, final UserServiceResponseHandler responseHandler) {
 
-        String url = "/users/"+userId+"?apiKey=rock2016";
+        String url = "/users/?barcode="+barCode+"&apiKey=rock2016";
         // trigger the network request
         VisionRestClient.get(url, null, new JsonHttpResponseHandler() {
             // define the success and failure callbacks
             // handle the successful response (popular photos JSON)
             @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            public void onFailure(int statusCode, Header[] headers, Throwable t, org.json.JSONObject response) {
                 System.out.println("statusCode = " + statusCode);
-                System.out.println("res = " + res);
+                System.out.println("res = " + response.toString());
                 t.printStackTrace();
                 responseHandler.onFailure();
             }

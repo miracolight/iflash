@@ -10,6 +10,7 @@ import java.util.Map;
  * Created by qingdi on 8/7/16.
  */
 public class DeviceSettings {
+    private String      version;
     private Map<Integer, Intensity>     intensities;
 
     private Integer     stimulateDuration;
@@ -22,6 +23,14 @@ public class DeviceSettings {
     private Point       rightFixation;
 
     private int         textDisplaySize;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Integer getFixationRadius() {
         return fixationRadius;

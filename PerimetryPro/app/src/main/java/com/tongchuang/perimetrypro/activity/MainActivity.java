@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -28,10 +29,9 @@ import com.tongchuang.perimetrypro.util.ActivityUtil;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int     EXAM_REQUEST_CODE = 1;
     private UserService         userService = new UserServiceImpl();
     private SettingService      settingService = new SettingServiceImpl();
-    private ProgressDialog      progressDialog;
-    private boolean             readyForExam = false;
     private boolean             examStarted = false;
 
     @Override
@@ -40,125 +40,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressDialog = new ProgressDialog(this);
-        GlobalContext.setDeviceId(ActivityUtil.getDeviceID(this));
-        initScan();
-    }
-
-    @Override
-    protected void onStart() {
-        System.out.println("in onStart...");
-        super.onStart();
-        initScan();
-    }
-
-    @Override
-    protected void onResume() {
-        System.out.println("in onResume...");
-        super.onResume();
-        initScan();
-    }
-
-    // go to the scan mode
-    public void initScan() {
-        readyForExam = false;
-        examStarted = false;
-        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-        scanIntegrator.initiateScan();
-    }
-
-    // process scan result
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-
-        progressDialog.setMessage("用户登录...");
-        progressDialog.show();
-
-        if (scanningResult != null) {
-            String barCode = scanningResult.getContents();
-
-            userService.getUserInfo(barCode, new UserServiceResponseHandler() {
-                @Override
-                public void onFailure() {
-                    onSetupFailure();
-                }
-
-                @Override
-                public void onSuccess(UserInfo userInfo) {
-                    progressDialog.hide();
-                    GlobalContext.setUserInfo(userInfo);
-                    loadExamSettings(userInfo);
-                }
-            });
-        } else {
-            onSetupFailure();
+        if (GlobalContext.getUserInfo().getPatientId() != null) {
+            findViewById(R.id.imgConfig).setVisibility(View.INVISIBLE);
+            findViewById(R.id.imgResult).setVisibility(View.INVISIBLE);
         }
+        ((TextView)findViewById(R.id.tvDeviceId)).setText("--"+GlobalContext.getDeviceId());
 
-    }
-
-    private void loadExamSettings(UserInfo userInfo) {
-        progressDialog.setMessage("系统准备中...");
-        progressDialog.show();
-
-
-        settingService.loadExamSettings(this, GlobalContext.getDeviceId(), userInfo,
-                new SettingServiceResponseHandler() {
-                    DeviceSettings deviceSettings = null;
-                    PatientSettings patientSettings = null;
-                    boolean deviceDone;
-                    boolean patientDone;
-
-                    @Override
-                    public void onDeviceSettingFailure(DeviceSettings deviceSettings) {
-                        deviceDone = true;
-                        this.deviceSettings = deviceSettings;
-                        onFinish();
-                    }
-
-                    @Override
-                    public void onDeviceSuccess(DeviceSettings deviceSettings) {
-                        deviceDone = true;
-                        this.deviceSettings = deviceSettings;
-                        onFinish();
-                    }
-
-                    @Override
-                    public void onPatientSettingFailure(PatientSettings patientSettings) {
-                        patientDone = true;
-                        this.patientSettings = patientSettings;
-                        onFinish();
-                    }
-
-                    @Override
-                    public void onPatientSettingsSuccess(PatientSettings patientSettings) {
-                        patientDone = true;
-                        this.patientSettings = patientSettings;
-                        onFinish();
-                    }
-
-                    private synchronized void onFinish() {
-                        if (deviceDone && patientDone) {
-                            progressDialog.hide();
-                            if (deviceSettings == null || patientSettings == null){
-                                onSetupFailure();
-                            } else {
-                                GlobalContext.setExamSettings(new ExamSettings(deviceSettings, patientSettings));
-                                readyForExam = true;
-                            }
-
-                        }
-                    }
-                });
-    }
-
-    private void onSetupFailure() {
-        if (progressDialog.isShowing()) {
-            progressDialog.hide();
-        }
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "发生错误!", Toast.LENGTH_SHORT);
-        toast.show();
-        initScan();
     }
 
     // go to Configuration page
@@ -212,11 +99,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private synchronized void startExam(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
-        if (!examStarted && readyForExam) {
+        if (!examStarted) {
             Intent i = new Intent(this, ExamActivity.class);
             GlobalContext.getExamSettings().setExamFieldOption(fieldOption);
-            startActivity(i);
+            startActivityForResult(i, EXAM_REQUEST_CODE);
             examStarted = true;
+        }
+    }
+
+    // return to signIn page when patient finishes the exam
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == EXAM_REQUEST_CODE) {
+            System.out.println("aimu_log: onActivityResult -- set examStarted=false");
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "测试结束!", Toast.LENGTH_LONG);
+            toast.show();
+
+            examStarted = false;
+            if (GlobalContext.getUserInfo().getPatientId() != null) {
+                finish();
+            }
         }
     }
 

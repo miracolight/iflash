@@ -35,11 +35,13 @@ public class ExamView extends View{
 
         ExamTask exam = examActivity.getExam();
         if (exam.isRunning()) {
-            StimulusInstance stimulus = exam.getCurrentStimulusInstance();
-            setBackgroundColor(stimulus.getBackgroundColor());
-            paint.setColor(stimulus.getStimulusColor());
-            canvas.drawCircle(stimulus.getPoint().x,
-                    stimulus.getPoint().y, exam.getStimulusRadius(), paint);
+            if (exam.getCurrentStimulusRunner().isStarted()) {
+                StimulusInstance stimulus = exam.getCurrentStimulusInstance();
+                setBackgroundColor(stimulus.getBackgroundColor());
+                paint.setColor(stimulus.getStimulusColor());
+                canvas.drawCircle(stimulus.getPoint().x,
+                        stimulus.getPoint().y, exam.getStimulusRadius(), paint);
+            }
 
             paint.setColor(Color.RED);
             for (Point p : exam.getFixations()) {
@@ -56,6 +58,11 @@ public class ExamView extends View{
                 paint.setColor(Color.WHITE);
                 paint.setTextSize(exam.getTextDisplaySize());
                 canvas.drawText(Integer.toString(secondsToStart), exam.getCenterX(), exam.getCenterY(), paint);
+            } else {
+                paint.setColor(Color.RED);
+                for (Point p : exam.getFixations()) {
+                    canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
+                }
             }
         }
     }

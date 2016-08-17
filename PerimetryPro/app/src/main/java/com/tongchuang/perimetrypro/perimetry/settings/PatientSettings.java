@@ -2,7 +2,6 @@ package com.tongchuang.perimetrypro.perimetry.settings;
 
 import android.graphics.Point;
 
-import com.tongchuang.perimetrypro.perimetry.common.Intensity;
 import com.tongchuang.perimetrypro.perimetry.pattern.PatternGenerator.PatternType;
 
 import java.util.Map;
@@ -11,8 +10,12 @@ import java.util.Map;
  * Created by qingdi on 8/7/16.
  */
 public class PatientSettings {
-    private Map<String, Integer> initStimulusDB;
-    private Map<String, Integer> stimulusPriorities;
+    private String      version;
+    private Map<String, Integer> initStimulusDBLeft;
+    private Map<String, Integer> stimulusPrioritiesLeft;
+
+    private Map<String, Integer> initStimulusDBRight;
+    private Map<String, Integer> stimulusPrioritiesRight;
 
     private Integer     stimulateDuration;
     private Integer     stimulateInterval;
@@ -24,9 +27,17 @@ public class PatientSettings {
     private Point       rightFixation;
 
     private String      stimulusSelectorClass;
-    private String      stimulusHandlerClass;
+    private String      stimulusRunnerClass;
 
     private PatternType patternType;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Integer getFixationRadius() {
         return fixationRadius;
@@ -36,12 +47,40 @@ public class PatientSettings {
         this.fixationRadius = fixationRadius;
     }
 
-    public Map<String, Integer> getInitStimulusDB() {
-        return initStimulusDB;
+    public Map<String, Integer> getInitStimulusDBLeft() {
+        return initStimulusDBLeft;
     }
 
-    public void setInitStimulusDB(Map<String, Integer> initStimulusDB) {
-        this.initStimulusDB = initStimulusDB;
+    public void setInitStimulusDBLeft(Map<String, Integer> initStimulusDBLeft) {
+        this.initStimulusDBLeft = initStimulusDBLeft;
+    }
+
+    public Map<String, Integer> getInitStimulusDBRight() {
+        return initStimulusDBRight;
+    }
+
+    public void setInitStimulusDBRight(Map<String, Integer> initStimulusDBRight) {
+        this.initStimulusDBRight = initStimulusDBRight;
+    }
+
+    public Map<String, Integer> getStimulusPrioritiesLeft() {
+        return stimulusPrioritiesLeft;
+    }
+
+    public void setStimulusPrioritiesLeft(Map<String, Integer> stimulusPrioritiesLeft) {
+        this.stimulusPrioritiesLeft = stimulusPrioritiesLeft;
+    }
+
+    public Map<String, Integer> getStimulusPrioritiesRight() {
+        return stimulusPrioritiesRight;
+    }
+
+    public void setStimulusPrioritiesRight(Map<String, Integer> stimulusPrioritiesRight) {
+        this.stimulusPrioritiesRight = stimulusPrioritiesRight;
+    }
+
+    public void setStimulusRunnerClass(String stimulusRunnerClass) {
+        this.stimulusRunnerClass = stimulusRunnerClass;
     }
 
     public Point getLeftFixation() {
@@ -92,12 +131,12 @@ public class PatientSettings {
         this.stimulusSpacing = stimulusSpacing;
     }
 
-    public String getStimulusHandlerClass() {
-        return stimulusHandlerClass;
+    public String getStimulusRunnerClass() {
+        return stimulusRunnerClass;
     }
 
     public void setStimulusHandlerClass(String stimulusHandlerClass) {
-        this.stimulusHandlerClass = stimulusHandlerClass;
+        this.stimulusRunnerClass = stimulusHandlerClass;
     }
 
     public String getStimulusSelectorClass() {
@@ -116,11 +155,4 @@ public class PatientSettings {
         this.patternType = patternType;
     }
 
-    public Map<String, Integer> getStimulusPriorities() {
-        return stimulusPriorities;
-    }
-
-    public void setStimulusPriorities(Map<String, Integer> stimulusPriorities) {
-        this.stimulusPriorities = stimulusPriorities;
-    }
 }

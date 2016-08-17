@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.tongchuang.perimetrypro.database.entity.PerimetryTest;
 import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
@@ -103,7 +104,7 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         values.put(PerimetryTest.KEY_PATIENT_ID, examResult.getPatientId()); // get patientId
         values.put(PerimetryTest.KEY_TEST_DATE, examResult.getExamDate());
         values.put(PerimetryTest.KEY_TEST_DEVICE_ID, examResult.getTestDeviceId()==null?ActivityUtil.getDeviceID(mContext):examResult.getTestDeviceId()); // get result
-        values.put(PerimetryTest.KEY_RESULT, examResult.getResult()); // get result
+        values.put(PerimetryTest.KEY_RESULT, examResult.toJSon()); // get result
         values.put(PerimetryTest.KEY_UPLOADED, examResult.getUploaded());
         values.put(PerimetryTest.KEY_SERVER_TEST_ID, examResult.getServerId());
 
@@ -125,7 +126,7 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(PerimetryTest.KEY_PATIENT_ID, examResult.getPatientId()); // get patientId
         values.put(PerimetryTest.KEY_TEST_DATE, examResult.getExamDate());
-        values.put(PerimetryTest.KEY_RESULT, examResult.getResult()); // get result
+        values.put(PerimetryTest.KEY_RESULT, examResult.toJSon()); // get result
         values.put(PerimetryTest.KEY_UPLOADED, examResult.getUploaded());
         values.put(PerimetryTest.KEY_SERVER_TEST_ID, examResult.getServerId());
 
@@ -188,11 +189,11 @@ public class VisionDBSQLiteHelper extends SQLiteOpenHelper {
         ExamResult examResult = null;
         if (cursor.moveToFirst()) {
             do {
-                examResult = new ExamResult();
+                Gson gson = new Gson();
+                examResult = gson.fromJson(cursor.getString(3), ExamResult.class);
                 examResult.setId(Integer.parseInt(cursor.getString(0)));
                 examResult.setPatientId(cursor.getString(1));
                 examResult.setExamDate(Long.parseLong(cursor.getString(2)));
-                examResult.setResult(cursor.getString(3));
                 examResult.setUploaded(cursor.getString(4));
                 examResult.setTestDeviceId(cursor.getString(5));
                 examResult.setServerId(cursor.getInt(6));
