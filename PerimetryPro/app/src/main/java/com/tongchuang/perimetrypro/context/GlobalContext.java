@@ -1,5 +1,6 @@
 package com.tongchuang.perimetrypro.context;
 
+import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.user.UserInfo;
 
@@ -10,6 +11,8 @@ public class GlobalContext {
     private static String deviceId;
     private static UserInfo userInfo;
     private static ExamSettings examSettings;
+
+    private static ExamTask examTask;
 
     public static String getDeviceId() {
         return deviceId;
@@ -33,5 +36,13 @@ public class GlobalContext {
 
     public static void setExamSettings(ExamSettings examSettings) {
         GlobalContext.examSettings = examSettings;
+    }
+
+    public static ExamTask getExamTask() {
+        return examTask;
+    }
+
+    public static void setExamTask(ExamTask examTask) {
+        GlobalContext.examTask = examTask;
     }
 }

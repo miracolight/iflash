@@ -19,6 +19,7 @@ public class PatientSettings {
 
     private Integer     stimulateDuration;
     private Integer     stimulateInterval;
+    private Integer     stimulateCountMax;
 
     private Integer     stimulusSpacing;
     private Integer     stimulusRadius;
@@ -30,6 +31,8 @@ public class PatientSettings {
     private String      stimulusRunnerClass;
 
     private PatternType patternType;
+
+    private ExamSettings.EXAM_FIELD_OPTION examFieldOption;
 
     public String getVersion() {
         return version;
@@ -115,6 +118,14 @@ public class PatientSettings {
         this.stimulateInterval = stimulateInterval;
     }
 
+    public Integer getStimulateCountMax() {
+        return stimulateCountMax;
+    }
+
+    public void setStimulateCountMax(Integer stimulateCountMax) {
+        this.stimulateCountMax = stimulateCountMax;
+    }
+
     public Integer getStimulusRadius() {
         return stimulusRadius;
     }
@@ -155,4 +166,11 @@ public class PatientSettings {
         this.patternType = patternType;
     }
 
+    public ExamSettings.EXAM_FIELD_OPTION getExamFieldOption() {
+        return examFieldOption;
+    }
+
+    public void setExamFieldOption(ExamSettings.EXAM_FIELD_OPTION examFieldOption) {
+        this.examFieldOption = examFieldOption;
+    }
 }

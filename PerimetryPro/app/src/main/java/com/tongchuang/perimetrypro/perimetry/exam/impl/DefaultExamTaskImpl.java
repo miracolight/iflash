@@ -8,6 +8,7 @@ import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.impl.DefaultStimulusRunnerImpl;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
+import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings.EXAM_FIELD_OPTION;
 import com.tongchuang.perimetrypro.perimetry.common.Intensity;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 public class DefaultExamTaskImpl implements ExamTask {
 
     private ExamSettings                examSettings;
+    private EXAM_FIELD_OPTION           currFieldOption;
     private List<Point>                 fixations;
     private int                         centerX;
     private int                         centerY;
@@ -39,24 +41,17 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     private List<ExamTaskListener>      examTaskListeners;
 
-    public DefaultExamTaskImpl(ExamSettings examSettings) {
-        minStimulusDB = Integer.MAX_VALUE;
-        maxStimulusDB = Integer.MIN_VALUE;
-        for (Integer db : examSettings.getIntensities().keySet()) {
-            if (db < minStimulusDB) {
-                minStimulusDB = db;
-            }
-            if (db > maxStimulusDB) {
-                maxStimulusDB = db;
-            }
-        }
+    public DefaultExamTaskImpl(ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption) {
+        this.minStimulusDB = examSettings.getMinStimulusDB();
+        this.maxStimulusDB = examSettings.getMaxStimulusDB();
 
-        fixations = Collections.singletonList(examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
+        this.fixations = Collections.singletonList(currFieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT?
                                 examSettings.getLeftFixation():examSettings.getRightFixation());
-        centerX = examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
+        this.centerX = currFieldOption == ExamSettings.EXAM_FIELD_OPTION.LEFT?
                         examSettings.getLeftFixation().x:examSettings.getRightFixation().x;
-        centerY = examSettings.getExamFieldOption()== ExamSettings.EXAM_FIELD_OPTION.LEFT?
+        this.centerY = currFieldOption == ExamSettings.EXAM_FIELD_OPTION.LEFT?
                         examSettings.getLeftFixation().y:examSettings.getRightFixation().y;
+        this.currFieldOption = currFieldOption;
     }
 
     public StimulusSelector getStimulusSelector() {
@@ -105,10 +100,6 @@ public class DefaultExamTaskImpl implements ExamTask {
         return centerY;
     }
 
-    @Override
-    public Intensity getDefaultIntensity() {
-        return examSettings.getIntensities().get(maxStimulusDB);
-    }
 
     @Override
     public boolean isRunning() {
@@ -228,5 +219,9 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     public void setExamTaskListeners(List<ExamTaskListener> examTaskListeners) {
         this.examTaskListeners = examTaskListeners;
+    }
+
+    public EXAM_FIELD_OPTION getCurrFieldOption() {
+        return currFieldOption;
     }
 }

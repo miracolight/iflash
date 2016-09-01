@@ -70,11 +70,12 @@ public class SigninActivity extends AppCompatActivity {
         if (scanningResult != null) {
             String barCode = scanningResult.getContents();
             System.out.println("barcode: "+barCode);
-            loadUserSettings(barCode);
-        } else {
-            onSigninFailure();
+            if (barCode !=null) {
+                loadUserSettings(barCode);
+                return;
+            }
         }
-
+        onSigninFailure();
     }
 
     private void loadUserSettings(String barCode) {
@@ -136,8 +137,13 @@ public class SigninActivity extends AppCompatActivity {
                             } else {
                                 processingBarcode = false;
                                 GlobalContext.setExamSettings(new ExamSettings(deviceSettings, patientSettings));
-                                Intent i = new Intent(SigninActivity.this, MainActivity.class);
-                                startActivity(i);
+                                if (GlobalContext.getUserInfo().getPatientId() != null) {
+                                    Intent i = new Intent(SigninActivity.this, PatientMainActivity.class);
+                                    startActivity(i);
+                                } else {
+                                    Intent i = new Intent(SigninActivity.this, MainActivity.class);
+                                    startActivity(i);
+                                }
                             }
 
                         }
@@ -147,7 +153,7 @@ public class SigninActivity extends AppCompatActivity {
 
     private void onSigninFailure() {
         Toast toast = Toast.makeText(getApplicationContext(),
-                "发生错误!", Toast.LENGTH_SHORT);
+                "请扫用户二维码登录!", Toast.LENGTH_SHORT);
         toast.show();
         processingBarcode = false;
         if (!scannerOn && !processingBarcode) {

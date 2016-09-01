@@ -8,7 +8,7 @@ public class UserInfo {
 
     private Integer     userId;
     private Role        role;
-    private Integer     subjectId;
+    private String      subjectId;
 
     public Role getRole() {
         return role;
@@ -18,11 +18,11 @@ public class UserInfo {
         this.role = role;
     }
 
-    public Integer getSubjectId() {
+    public String getSubjectId() {
         return subjectId;
     }
 
-    public void setSubjectId(Integer subjectId) {
+    public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
 
@@ -34,14 +34,14 @@ public class UserInfo {
         this.userId = userId;
     }
 
-    public Integer getDoctorId() {
+    public String getDoctorId() {
         if (role == Role.DOCTOR) {
             return subjectId;
         }
         return null;
     }
 
-    public Integer getPatientId() {
+    public String getPatientId() {
         if (role == Role.PATIENT) {
             return subjectId;
         }

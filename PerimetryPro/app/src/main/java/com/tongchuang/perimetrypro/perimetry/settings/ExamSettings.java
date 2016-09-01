@@ -13,17 +13,33 @@ import java.util.Map;
 public class ExamSettings {
 
 
-    public static enum EXAM_FIELD_OPTION {LEFT, RIGHT};
+    public static enum EXAM_FIELD_OPTION {LEFT, RIGHT, BOTH};
 
     private DeviceSettings  deviceSettings;
     private PatientSettings patientSettings;
 
-    private EXAM_FIELD_OPTION    examFieldOption;
+    private Integer         minStimulusDB;
+    private Integer         maxStimulusDB;
 
 
     public ExamSettings(DeviceSettings deviceSettings, PatientSettings patientSettings) {
         this.deviceSettings = deviceSettings;
         this.patientSettings = patientSettings;
+
+        minStimulusDB = Integer.MAX_VALUE;
+        maxStimulusDB = Integer.MIN_VALUE;
+        for (Integer db : deviceSettings.getIntensities().keySet()) {
+            if (db < minStimulusDB) {
+                minStimulusDB = db;
+            }
+            if (db > maxStimulusDB) {
+                maxStimulusDB = db;
+            }
+        }
+    }
+
+    public Intensity getDefaultIntensity() {
+        return deviceSettings.getIntensities().get(maxStimulusDB);
     }
 
     public String getDeviceSettingsVersion() {
@@ -67,7 +83,7 @@ public class ExamSettings {
         return deviceSettings.getStimulusSpacing();
     }
 
-    public Map<String, Integer> getInitStimulusDB() {
+    public Map<String, Integer> getInitStimulusDB(EXAM_FIELD_OPTION examFieldOption) {
         return examFieldOption==EXAM_FIELD_OPTION.LEFT?
                 patientSettings.getInitStimulusDBLeft():patientSettings.getInitStimulusDBRight();
     }
@@ -84,20 +100,29 @@ public class ExamSettings {
         return patientSettings.getPatternType();
     }
 
-    public EXAM_FIELD_OPTION getExamFieldOption() {
-        return examFieldOption;
-    }
-
-    public void setExamFieldOption(EXAM_FIELD_OPTION examFieldOption) {
-        this.examFieldOption = examFieldOption;
-    }
-
-    public Map<String, Integer> getStimulusPriorities() {
+    public Map<String, Integer> getStimulusPriorities(EXAM_FIELD_OPTION examFieldOption) {
         return examFieldOption==EXAM_FIELD_OPTION.LEFT?
                 patientSettings.getStimulusPrioritiesLeft():patientSettings.getStimulusPrioritiesRight();
     }
 
     public int getTextDisplaySize() {
         return deviceSettings.getTextDisplaySize();
+    }
+
+
+    public EXAM_FIELD_OPTION getExamFieldOption() {
+        return patientSettings.getExamFieldOption();
+    }
+
+    public Integer getMaxStimulusDB() {
+        return maxStimulusDB;
+    }
+
+    public Integer getMinStimulusDB() {
+        return minStimulusDB;
+    }
+
+    public Integer getStimulateCountMax() {
+        return patientSettings.getStimulateCountMax();
     }
 }

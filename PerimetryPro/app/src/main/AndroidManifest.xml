@@ -12,17 +12,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
-        <activity android:name=".activity.ExamActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".activity.ConfigActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".activity.ResultsActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".activity.SigninActivity"
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".activity.ExamActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.ConfigActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.ResultsActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.SigninActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.PatientMainActivity"></activity>
     </application>
 
 </manifest>

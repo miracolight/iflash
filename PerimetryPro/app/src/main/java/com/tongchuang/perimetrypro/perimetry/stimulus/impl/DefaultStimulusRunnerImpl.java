@@ -128,7 +128,7 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
             }
         }
 
-        System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
+       // System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
         allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
         stimulusDB = nextStimulusDB;
 
@@ -146,7 +146,7 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
 
     @Override
     public String getFinalResult() {
-        return finalResult;
+        return finalResult==null?(stimulusDB+"?"):finalResult;
     }
 
 

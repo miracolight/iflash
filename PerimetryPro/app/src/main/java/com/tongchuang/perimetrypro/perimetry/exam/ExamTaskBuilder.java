@@ -21,33 +21,31 @@ import java.util.Map;
  */
 public class ExamTaskBuilder {
 
-    public static ExamTask build(ExamSettings examSettings, List<ExamTaskListener> examTaskListeners)
+    public static ExamTask build(ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
 
-        DefaultExamTaskImpl exam = new DefaultExamTaskImpl(examSettings);
+        DefaultExamTaskImpl exam = new DefaultExamTaskImpl(examSettings, currFieldOption);
 
         int minStimulusDB = exam.getMinStimulusDB();
         String[] stimulusPositionCodes = PatternGeneratorFactory.getPatternGenerator(examSettings.getPatternType())
-                                            .getStimulusPositionCodes(examSettings.getExamFieldOption());
+                                            .getStimulusPositionCodes(currFieldOption);
 
         Constructor stimulusRunnerConstructor = Class.forName(examSettings.getStimulusRunnerClass())
                                         .getConstructor(String.class, int.class, ExamTask.class);
 
-        Map<String, Integer> initStimulusDB = examSettings.getInitStimulusDB();
+        Map<String, Integer> initStimulusDB = examSettings.getInitStimulusDB(currFieldOption);
         List<StimulusRunner> stimulusRunners = new ArrayList<StimulusRunner>();
         Map<String, Point> positionPoints = new HashMap<String, Point>();
         for (String code : stimulusPositionCodes) {
             Integer db = initStimulusDB.get(code);
             StimulusRunner r = (StimulusRunner)stimulusRunnerConstructor.newInstance(code, db==null?minStimulusDB:db.intValue(), exam);
             stimulusRunners.add(r);
-            positionPoints.put(code, ExamUtil.getPoint(code, examSettings));
+            positionPoints.put(code, ExamUtil.getPoint(code, examSettings, currFieldOption));
         }
 
         exam.setStimulusRunners(stimulusRunners);
 
         exam.setPositionPoints(positionPoints);
-
-        exam.setExamTaskListeners(examTaskListeners);
         exam.setExamSettings(examSettings);
 
         Constructor stimulusSelectorConstructor = Class.forName(examSettings.getStimulusSelectorClass())
@@ -57,4 +55,5 @@ public class ExamTaskBuilder {
 
         return exam;
     }
+
 }

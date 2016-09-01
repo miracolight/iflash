@@ -2,9 +2,11 @@ package com.tongchuang.perimetrypro.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Point;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +17,11 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tongchuang.perimetrypro.R;
 import com.tongchuang.perimetrypro.context.GlobalContext;
+import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
+import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskBuilder;
+import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
+import com.tongchuang.perimetrypro.perimetry.result.ResultService;
+import com.tongchuang.perimetrypro.perimetry.result.impl.ResultServiceImpl;
 import com.tongchuang.perimetrypro.perimetry.settings.DeviceSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.PatientSettings;
@@ -27,12 +34,15 @@ import com.tongchuang.perimetrypro.user.UserServiceResponseHandler;
 import com.tongchuang.perimetrypro.user.impl.UserServiceImpl;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int     EXAM_REQUEST_CODE = 1;
     private UserService         userService = new UserServiceImpl();
     private SettingService      settingService = new SettingServiceImpl();
     private boolean             examStarted = false;
+    private ResultService       resultSerivce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
         ((TextView)findViewById(R.id.tvDeviceId)).setText("--"+GlobalContext.getDeviceId());
 
+        resultSerivce = new ResultServiceImpl(this) ;
     }
 
     // go to Configuration page
@@ -101,9 +112,19 @@ public class MainActivity extends AppCompatActivity {
     private synchronized void startExam(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
         if (!examStarted) {
             Intent i = new Intent(this, ExamActivity.class);
-            GlobalContext.getExamSettings().setExamFieldOption(fieldOption);
-            startActivityForResult(i, EXAM_REQUEST_CODE);
-            examStarted = true;
+
+            ExamTask exam = null;
+            try {
+                exam = ExamTaskBuilder.build(GlobalContext.getExamSettings(),fieldOption);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast toast = Toast.makeText(getApplicationContext(),
+                    "Error:"+e.getMessage(), Toast.LENGTH_LONG);
+                Point pos = fieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT?GlobalContext.getExamSettings().getLeftFixation():
+                        GlobalContext.getExamSettings().getRightFixation();
+                toast.setGravity(Gravity.TOP| Gravity.LEFT, pos.x, pos.y);
+                toast.show();
+            }
         }
     }
 
@@ -116,9 +137,11 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
 
             examStarted = false;
-            if (GlobalContext.getUserInfo().getPatientId() != null) {
-                finish();
-            }
+
+            ExamResult examResult = new ExamResult(GlobalContext.getExamSettings());
+            examResult.setPatientId(GlobalContext.getUserInfo().getPatientId());
+            examResult.setTestDeviceId(GlobalContext.getDeviceId());
+            resultSerivce.saveResult(examResult);
         }
     }
 

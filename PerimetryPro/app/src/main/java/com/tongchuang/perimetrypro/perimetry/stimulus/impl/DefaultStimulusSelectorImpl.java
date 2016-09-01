@@ -21,10 +21,15 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
     private int currLevel = Integer.MAX_VALUE;
     private int maxLevel = Integer.MIN_VALUE;
+
+    private int stimulateCount = 0;
+    private int stimulateCountMax = Integer.MAX_VALUE;
+
+
     public DefaultStimulusSelectorImpl(ExamTask examTask) {
         stimulusRunnersByPriorities = new HashMap<Integer, List<StimulusRunner>>();
         ExamSettings examSettings = examTask.getExamSettings();
-        Map<String, Integer> priorities = examSettings.getStimulusPriorities();
+        Map<String, Integer> priorities = examSettings.getStimulusPriorities(examTask.getCurrFieldOption());
         List<StimulusRunner> runners = examTask.getStimulusRunners();
 
         for (StimulusRunner r : runners) {
@@ -44,23 +49,27 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
             }
             rList.add(r);
         }
+
+        if (examSettings.getStimulateCountMax() != null) {
+            stimulateCountMax = examSettings.getStimulateCountMax();
+        }
     }
 
 
     @Override
     public StimulusRunner getNextStimulus() {
         StimulusRunner runner = null;
-        while (currLevel <= maxLevel) {
+        while (currLevel <= maxLevel && stimulateCount < stimulateCountMax) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);
-            System.out.println("aimu_log: level="+currLevel+"; runners.size()="+runners.size());
             if (runners != null && !runners.isEmpty()) {
                 runner = runners.get(getRandomIndex(runners.size()));
+                System.out.println("aimu_log: level="+currLevel+"; runners.size()="+runners.size()+"; poscode="+runner.getPositionCode());
                 break;
             }
             currLevel++;
         }
-
+        stimulateCount++;
         return runner;
     }
 

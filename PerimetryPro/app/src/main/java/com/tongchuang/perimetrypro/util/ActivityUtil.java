@@ -6,6 +6,10 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.view.WindowManager;
+
+import com.tongchuang.perimetrypro.perimetry.common.Intensity;
+import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 
 import java.util.UUID;
 
@@ -35,5 +39,12 @@ public class ActivityUtil {
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
         String deviceId = deviceUuid.toString();
         return deviceId;
+    }
+
+    public static void setScreenBrightness(AppCompatActivity activity, ExamSettings examSettings) {
+        Intensity defaultIntensity = examSettings.getDefaultIntensity();
+        WindowManager.LayoutParams layout = activity.getWindow().getAttributes();
+        layout.screenBrightness = defaultIntensity.getScreenBrightness();
+        activity.getWindow().setAttributes(layout);
     }
 }

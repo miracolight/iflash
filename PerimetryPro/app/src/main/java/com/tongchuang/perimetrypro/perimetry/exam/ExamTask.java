@@ -26,9 +26,9 @@ public interface ExamTask extends Runnable{
     public int getCenterX();
     public int getCenterY();
 
-    public static enum STATE {READY, RUNNING, FINISHED};
+    public void setExamTaskListeners(List<ExamTaskListener> examTaskListeners);
 
-    public Intensity getDefaultIntensity();
+    public static enum STATE {READY, RUNNING, FINISHED};
 
     public boolean isRunning();
     public boolean isDone();
@@ -46,4 +46,6 @@ public interface ExamTask extends Runnable{
 
     public StimulusRunner getCurrentStimulusRunner();
     public StimulusInstance getCurrentStimulusInstance();
+
+    public ExamSettings.EXAM_FIELD_OPTION getCurrFieldOption();
 }

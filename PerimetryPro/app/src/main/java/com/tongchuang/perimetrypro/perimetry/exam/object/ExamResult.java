@@ -6,6 +6,7 @@ import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusResponse;
+import com.tongchuang.perimetrypro.util.ExamUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +30,11 @@ public class ExamResult {
 
     private ExamSettings.EXAM_FIELD_OPTION examFieldOption;
 
-    private Map<String, String> examResult;
-    private Map<String, List<StimulusResponse>> allResponses;
+    private Map<String, String> examResultLeft;
+    private Map<String, String> allResponsesLeft;
+
+    private Map<String, String> examResultRight;
+    private Map<String, String> allResponsesRight;
 
     public ExamResult() {
     }
@@ -42,21 +46,33 @@ public class ExamResult {
         this.uploaded = uploaded;
     }
 
-    public ExamResult(ExamTask exam) {
+    public ExamResult(ExamSettings examSettings) {
         this.examDate = System.currentTimeMillis();
         this.uploaded = "N";
 
-        this.deviceSettingsVersion = exam.getExamSettings().getDeviceSettingsVersion();
-        this.patientSettingsVersion = exam.getExamSettings().getPatientSettingsVersion();
-        this.examFieldOption = exam.getExamSettings().getExamFieldOption();
+        this.deviceSettingsVersion = examSettings.getDeviceSettingsVersion();
+        this.patientSettingsVersion = examSettings.getPatientSettingsVersion();
+        this.examFieldOption = examSettings.getExamFieldOption();
 
-        examResult = new HashMap<String, String>();
-        allResponses = new HashMap<String, List<StimulusResponse>>();
+    }
+
+    public void addLeftResult(ExamTask exam) {
+        examResultLeft = new HashMap<String, String>();
+        allResponsesLeft = new HashMap<String, String>();
+        addResult(exam, examResultLeft, allResponsesLeft);
+    }
+
+    public void addRightResult(ExamTask exam) {
+        examResultRight = new HashMap<String, String>();
+        allResponsesRight = new HashMap<String, String>();
+        addResult(exam, examResultRight, allResponsesRight);
+    }
+
+    private void addResult(ExamTask exam, Map<String, String> examResult, Map<String, String> allResponses) {
         List<StimulusRunner> runners = exam.getStimulusRunners();
         for (StimulusRunner r : runners) {
             examResult.put(r.getPositionCode(), r.getFinalResult());
-            allResponses.put(r.getPositionCode(), r.getAllResponses());
-
+            allResponses.put(r.getPositionCode(), ExamUtil.fromAllResponses(r.getAllResponses()));
         }
     }
 
@@ -107,6 +123,22 @@ public class ExamResult {
 
     public void setServerId(Integer serverId) {
         this.serverId = serverId;
+    }
+
+    public String getPatientSettingsVersion() {
+        return patientSettingsVersion;
+    }
+
+    public void setPatientSettingsVersion(String patientSettingsVersion) {
+        this.patientSettingsVersion = patientSettingsVersion;
+    }
+
+    public String getDeviceSettingsVersion() {
+        return deviceSettingsVersion;
+    }
+
+    public void setDeviceSettingsVersion(String deviceSettingsVersion) {
+        this.deviceSettingsVersion = deviceSettingsVersion;
     }
 
     public String toJSon() {

@@ -49,7 +49,6 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
 
-        dbHelper = VisionDBSQLiteHelper.getInstance(this);
 
         try {
             init();
@@ -62,16 +61,16 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     private void init() throws Exception {
         ActivityUtil.hideStatusBar(this);
 
-        exam = ExamTaskBuilder.build(GlobalContext.getExamSettings(), Collections.<ExamTaskListener>singletonList(this));
+        exam = GlobalContext.getExamTask();
+        exam.setExamTaskListeners(Collections.<ExamTaskListener>singletonList(this));
 
-        Intensity defaultIntensity = exam.getDefaultIntensity();
-        WindowManager.LayoutParams layout = getWindow().getAttributes();
-        layout.screenBrightness = defaultIntensity.getScreenBrightness();
-        getWindow().setAttributes(layout);
+        ActivityUtil.setScreenBrightness(this, exam.getExamSettings());
 
         examView = new ExamView(this);
-        examView.setBackgroundColor(IntensityUtil.getBackgroundColor(defaultIntensity));
+        examView.setBackgroundColor(IntensityUtil.getBackgroundColor(exam.getExamSettings().getDefaultIntensity()));
         ((FrameLayout) findViewById(R.id.frmRun)).addView(examView);
+
+        startExam();
     }
 
 
@@ -101,9 +100,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void handleKeyTouchEvent() {
-        if (!examStarted) {
-            startExam();
-        } else if (exam.isRunning()){
+        if (exam.isRunning()){
             exam.onResponse();
         }
     }
@@ -124,61 +121,6 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
             }.start();
             examStarted = true;
         }
-    }
-
-    public void saveResult(VisionDBSQLiteHelper dbHelper) {
-        ExamResult result = new ExamResult(exam);
-        String deviceId = GlobalContext.getDeviceId();
-        result.setPatientId(GlobalContext.getUserInfo().getPatientId().toString());
-        result.setTestDeviceId(deviceId);
-        dbHelper.addExamResult(result);
-        saveToServer(result, dbHelper);
-    }
-
-
-    public void saveToServer(ExamResult result, final VisionDBSQLiteHelper dbHelper) {
-        String url = result.getPatientId()+"/perimetrytests?apiKey=rock2016";
-
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-
-            jsonObject.put("patientId", result.getPatientId());
-            jsonObject.put("result", result.toJSon());
-            jsonObject.put("testDate", result.getExamDate());
-            jsonObject.put("testDeviceId", result.getTestDeviceId());
-            jsonObject.put("origClientTestId", result.getId());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        result.setUploaded("Y");
-        final ExamResult f = result;
-        VisionRestClient.post(this, url, jsonObject, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                System.out.println("statusCode = " + statusCode);
-                System.out.println("res = " + res);
-                t.printStackTrace();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String response) {
-                System.out.println("in success - uploaded=" + f.getUploaded());
-                for (Header h : headers) {
-                    if ("Location".equals(h.getName())) {
-                        String url = h.getValue();
-                        String serverId = url.substring(url.lastIndexOf("/")+1).trim();
-                        f.setServerId(Integer.valueOf(serverId));
-                        break;
-                    }
-                }
-                dbHelper.updateExamResult(f);
-                System.out.println("in success - update done");
-            }
-        });
     }
 
     @Override
@@ -202,15 +144,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public void onExamTaskDone() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                examView.invalidate();
-                saveResult(dbHelper);
-                finish();
-            }
-        });
-
+        finish();
     }
 
     public ExamTask getExam() {
