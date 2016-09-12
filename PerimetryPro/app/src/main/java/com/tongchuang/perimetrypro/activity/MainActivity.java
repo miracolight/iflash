@@ -21,6 +21,7 @@ import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskBuilder;
 import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.perimetry.result.ResultService;
+import com.tongchuang.perimetrypro.perimetry.result.ResultServiceResponseHandler;
 import com.tongchuang.perimetrypro.perimetry.result.impl.ResultServiceImpl;
 import com.tongchuang.perimetrypro.perimetry.settings.DeviceSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // return to signIn page when patient finishes the exam
+    // stop the app when patient finishes the exam
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == EXAM_REQUEST_CODE) {
             System.out.println("aimu_log: onActivityResult -- set examStarted=false");
@@ -141,7 +142,16 @@ public class MainActivity extends AppCompatActivity {
             ExamResult examResult = new ExamResult(GlobalContext.getExamSettings());
             examResult.setPatientId(GlobalContext.getUserInfo().getPatientId());
             examResult.setTestDeviceId(GlobalContext.getDeviceId());
-            resultSerivce.saveResult(examResult);
+            resultSerivce.saveResult(examResult,
+                            new ResultServiceResponseHandler() {
+                                @Override
+                                public void onFinish() {
+                                    moveTaskToBack(true);
+                                    MainActivity.this.finish();
+                                }
+                            });
+
+
         }
     }
 

@@ -9,6 +9,7 @@ import com.tongchuang.perimetrypro.database.VisionDBSQLiteHelper;
 import com.tongchuang.perimetrypro.network.VisionRestClient;
 import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.perimetry.result.ResultService;
+import com.tongchuang.perimetrypro.perimetry.result.ResultServiceResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,13 +29,13 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public void saveResult(ExamResult result) {
+    public void saveResult(ExamResult result, final ResultServiceResponseHandler responseHandler) {
         dbHelper.addExamResult(result);
-        saveToServer(result, dbHelper);
+        saveToServer(result, dbHelper, responseHandler);
     }
 
 
-    public void saveToServer(ExamResult result, final VisionDBSQLiteHelper dbHelper) {
+    public void saveToServer(ExamResult result, final VisionDBSQLiteHelper dbHelper, final ResultServiceResponseHandler responseHandler) {
         String url = result.getPatientId()+"/perimetrytests?apiKey=rock2016";
 
 
@@ -60,6 +61,7 @@ public class ResultServiceImpl implements ResultService {
                 System.out.println("statusCode = " + statusCode);
                 System.out.println("res = " + res);
                 t.printStackTrace();
+                responseHandler.onFinish();
             }
 
             @Override
@@ -74,6 +76,7 @@ public class ResultServiceImpl implements ResultService {
                     }
                 }
                 dbHelper.updateExamResult(f);
+                responseHandler.onFinish();
                 System.out.println("in success - update done");
             }
         });

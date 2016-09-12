@@ -1,7 +1,9 @@
 package com.tongchuang.perimetrypro.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -19,13 +21,16 @@ import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskBuilder;
 import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.perimetry.result.ResultService;
+import com.tongchuang.perimetrypro.perimetry.result.ResultServiceResponseHandler;
 import com.tongchuang.perimetrypro.perimetry.result.impl.ResultServiceImpl;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings.EXAM_FIELD_OPTION;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
 import com.tongchuang.perimetrypro.util.IntensityUtil;
+import com.tongchuang.perimetrypro.util.TimeUtil;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.TimeUnit;
 
 public class PatientMainActivity extends AppCompatActivity  implements View.OnTouchListener{
 
@@ -140,6 +145,8 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
             System.out.println("aimu_log: onActivityResult -- set examStarted=false");
             Toast toast = Toast.makeText(getApplicationContext(),
                     "测试结束!", Toast.LENGTH_SHORT);
+            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+            v.setTextColor(Color.GREEN);
             Point pos = currFieldOption==EXAM_FIELD_OPTION.LEFT?GlobalContext.getExamSettings().getLeftFixation():
                     GlobalContext.getExamSettings().getRightFixation();
             toast.setGravity(Gravity.TOP| Gravity.LEFT, pos.x, pos.y);
@@ -151,15 +158,24 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
                 examResult.addLeftResult(exam);
             }
 
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvExamLeft.setVisibility(View.INVISIBLE);
+                    tvExamRight.setVisibility(View.INVISIBLE);
+                }
+            });
+
             if (currFieldOption == EXAM_FIELD_OPTION.RIGHT && GlobalContext.getExamSettings().getExamFieldOption()==EXAM_FIELD_OPTION.BOTH) {
-                runOnUiThread(new Runnable() {
+                // Execute some code after 2 seconds have passed
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         currFieldOption = EXAM_FIELD_OPTION.LEFT;
                         prepareForExam();
-                        examStarted = false;
-                    }
-                });
+                        examStarted = false;                            }
+                }, TimeUtil.SHORT_DELAY);
             } else {
                 onFinish();
             }
@@ -170,7 +186,17 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
     private void onFinish() {
         examResult.setPatientId(GlobalContext.getUserInfo().getPatientId());
         examResult.setTestDeviceId(GlobalContext.getDeviceId());
-        resultSerivce.saveResult(examResult);
-        finish();
+        resultSerivce.saveResult(examResult,
+                new ResultServiceResponseHandler() {
+                    @Override
+                    public void onFinish() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                PatientMainActivity.this.finish();                           }
+                        }, TimeUtil.SHORT_DELAY);
+                    }
+                });
     }
 }

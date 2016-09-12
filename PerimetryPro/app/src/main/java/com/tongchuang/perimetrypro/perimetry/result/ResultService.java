@@ -7,5 +7,5 @@ import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
  * Created by qingdi on 8/22/16.
  */
 public interface ResultService {
-    void saveResult(ExamResult result);
+    void saveResult(ExamResult result, final ResultServiceResponseHandler responseHandler);
 }

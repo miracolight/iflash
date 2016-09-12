@@ -24,9 +24,13 @@ import com.tongchuang.perimetrypro.user.UserService;
 import com.tongchuang.perimetrypro.user.UserServiceResponseHandler;
 import com.tongchuang.perimetrypro.user.impl.UserServiceImpl;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
+import com.tongchuang.perimetrypro.util.TimeUtil;
+
+import java.util.concurrent.TimeUnit;
 
 public class SigninActivity extends AppCompatActivity {
 
+    public static final int     PATIENT_MAIN_REQUEST_CODE = 1;
     private UserService userService = new UserServiceImpl();
     private SettingService settingService = new SettingServiceImpl();
     private boolean scannerOn = false;
@@ -63,19 +67,28 @@ public class SigninActivity extends AppCompatActivity {
 
     // process scan result
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        scannerOn = false;
-        processingBarcode = true;
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        System.out.println("SigninActivity onActivityResult");
+        if (requestCode == PATIENT_MAIN_REQUEST_CODE) {
+            System.out.println("SigninActivity onActivityResult before killProcess");
+            moveTaskToBack(true);
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+        } else {//back from scanning barcode
+            scannerOn = false;
+            processingBarcode = true;
+            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
-        if (scanningResult != null) {
-            String barCode = scanningResult.getContents();
-            System.out.println("barcode: "+barCode);
-            if (barCode !=null) {
-                loadUserSettings(barCode);
-                return;
+            if (scanningResult != null) {
+                String barCode = scanningResult.getContents();
+                System.out.println("barcode: "+barCode);
+                if (barCode !=null) {
+                    loadUserSettings(barCode);
+                    return;
+                }
             }
+            onSigninFailure();
         }
-        onSigninFailure();
+
     }
 
     private void loadUserSettings(String barCode) {
@@ -139,7 +152,7 @@ public class SigninActivity extends AppCompatActivity {
                                 GlobalContext.setExamSettings(new ExamSettings(deviceSettings, patientSettings));
                                 if (GlobalContext.getUserInfo().getPatientId() != null) {
                                     Intent i = new Intent(SigninActivity.this, PatientMainActivity.class);
-                                    startActivity(i);
+                                    startActivityForResult(i, PATIENT_MAIN_REQUEST_CODE);
                                 } else {
                                     Intent i = new Intent(SigninActivity.this, MainActivity.class);
                                     startActivity(i);

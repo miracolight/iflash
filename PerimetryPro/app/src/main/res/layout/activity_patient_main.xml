@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/tvExamLeft"
-            android:text="点击开始测试左眼"/>
+            android:textColor="#FAFAFA"
+            android:text="请调节聚焦旋钮直到可以轻松看清本段文字, 点击按钮开始测试左眼"/>
     </FrameLayout>
     <FrameLayout
         android:layout_width="0dp"
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/tvExamRight"
-            android:text="点击开始测试右眼"/>
+            android:textColor="#FAFAFA"
+            android:text="请调节聚焦旋钮直到可以轻松看清本段文字, 点击按钮开始测试右眼"/>
     </FrameLayout>
 </LinearLayout>
