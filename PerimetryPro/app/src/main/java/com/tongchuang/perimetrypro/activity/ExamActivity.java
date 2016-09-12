@@ -92,7 +92,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     // handle the press of "D" (volume_up) on VR bluetooth controller
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode==KeyEvent.KEYCODE_ESCAPE)){
             handleKeyTouchEvent();
             return true;
         }
