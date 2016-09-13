@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
 import com.tongchuang.perimetrypro.util.IntensityUtil;
 import com.tongchuang.perimetrypro.util.TimeUtil;
+import com.tongchuang.perimetrypro.view.ExamView;
+import com.tongchuang.perimetrypro.view.PatientMainActivityView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
@@ -46,23 +49,25 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
 
     private ResultService   resultSerivce;
 
+    private PatientMainActivityView patientMainActivityView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("PatientMainActivity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_main);
 
-        tvExamLeft = (TextView)findViewById(R.id.tvExamLeft);
-        tvExamRight = (TextView)findViewById(R.id.tvExamRight);
+  //      tvExamLeft = (TextView)findViewById(R.id.tvExamLeft);
+  //      tvExamRight = (TextView)findViewById(R.id.tvExamRight);
 
         ActivityUtil.hideStatusBar(this);
-
+/*
         ActivityUtil.setScreenBrightness(this, GlobalContext.getExamSettings());
 
         int bgColor = IntensityUtil.getBackgroundColor(GlobalContext.getExamSettings().getDefaultIntensity());
         findViewById(R.id.frExamLeft).setBackgroundColor(bgColor);
         findViewById(R.id.frExamRight).setBackgroundColor(bgColor);
-
+*/
         EXAM_FIELD_OPTION examFieldOption = GlobalContext.getExamSettings().getExamFieldOption();
         if (examFieldOption == EXAM_FIELD_OPTION.BOTH) {
             currFieldOption = EXAM_FIELD_OPTION.RIGHT;
@@ -70,24 +75,17 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
             currFieldOption = examFieldOption;
         }
 
-        prepareForExam();
-
         examResult = new ExamResult(GlobalContext.getExamSettings());
 
         resultSerivce = new ResultServiceImpl(this) ;
 
+        patientMainActivityView = new PatientMainActivityView(this, GlobalContext.getExamSettings(), currFieldOption);
+        patientMainActivityView.setBackgroundColor(IntensityUtil.getBackgroundColor(GlobalContext.getExamSettings().getDefaultIntensity()));
+        ((FrameLayout) findViewById(R.id.frmPatientMain)).addView(patientMainActivityView);
+
 
     }
 
-    private void prepareForExam() {
-        if (currFieldOption == EXAM_FIELD_OPTION.RIGHT) {
-            tvExamLeft.setVisibility(View.INVISIBLE);
-            tvExamRight.setVisibility(View.VISIBLE);
-        } else {
-            tvExamLeft.setVisibility(View.VISIBLE);
-            tvExamRight.setVisibility(View.INVISIBLE);
-        }
-    }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -161,8 +159,8 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvExamLeft.setVisibility(View.INVISIBLE);
-                    tvExamRight.setVisibility(View.INVISIBLE);
+                    patientMainActivityView.setFieldOption(null);
+                    patientMainActivityView.invalidate();
                 }
             });
 
@@ -173,8 +171,10 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
                     @Override
                     public void run() {
                         currFieldOption = EXAM_FIELD_OPTION.LEFT;
-                        prepareForExam();
-                        examStarted = false;                            }
+                        patientMainActivityView.setFieldOption(currFieldOption);
+                        patientMainActivityView.invalidate();
+                        examStarted = false;
+                    }
                 }, TimeUtil.SHORT_DELAY);
             } else {
                 onFinish();

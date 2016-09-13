@@ -50,8 +50,8 @@ public class ExamResult {
         this.examDate = System.currentTimeMillis();
         this.uploaded = "N";
 
-        this.deviceSettingsVersion = examSettings.getDeviceSettingsVersion();
-        this.patientSettingsVersion = examSettings.getPatientSettingsVersion();
+        this.deviceSettingsVersion = examSettings.getDeviceSettingsVersion()==null?"0":examSettings.getDeviceSettingsVersion();
+        this.patientSettingsVersion = examSettings.getPatientSettingsVersion()==null?"0":examSettings.getPatientSettingsVersion();
         this.examFieldOption = examSettings.getExamFieldOption();
 
     }

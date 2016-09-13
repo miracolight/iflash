@@ -53,16 +53,15 @@ public class ExamView extends View{
             canvas.drawText("测试结束", exam.getCenterX(), exam.getCenterY(), paint);
         }
         else {
+            paint.setColor(Color.RED);
+            for (Point p : exam.getFixations()) {
+                canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
+            }
             int secondsToStart = examActivity.getSecondsToStart();
             if (secondsToStart > 0) {
                 paint.setColor(Color.WHITE);
-                paint.setTextSize(exam.getTextDisplaySize());
+                paint.setTextSize(exam.getTextDisplaySize()*2);
                 canvas.drawText(Integer.toString(secondsToStart), exam.getCenterX(), exam.getCenterY(), paint);
-            } else {
-                paint.setColor(Color.RED);
-                for (Point p : exam.getFixations()) {
-                    canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
-                }
             }
         }
     }

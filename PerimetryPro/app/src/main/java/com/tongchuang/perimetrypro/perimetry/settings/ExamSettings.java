@@ -60,27 +60,33 @@ public class ExamSettings {
     }
 
     public Point getLeftFixation() {
-        return deviceSettings.getLeftFixation();
+        return patientSettings.getLeftFixation()!=null?
+                patientSettings.getLeftFixation():deviceSettings.getLeftFixation();
     }
 
     public Point getRightFixation() {
-        return deviceSettings.getRightFixation();
+        return patientSettings.getRightFixation()!=null?
+                patientSettings.getRightFixation():deviceSettings.getRightFixation();
     }
 
     public Integer getStimulateDuration() {
-        return deviceSettings.getStimulateDuration();
+        return patientSettings.getStimulateDuration()!=null?
+                patientSettings.getStimulateDuration():deviceSettings.getStimulateDuration();
     }
 
     public Integer getStimulateInterval() {
-        return deviceSettings.getStimulateInterval();
+        return patientSettings.getStimulateInterval()!= null?
+                patientSettings.getStimulateInterval():deviceSettings.getStimulateInterval();
     }
 
     public Integer getStimulusRadius() {
-        return deviceSettings.getStimulusRadius();
+        return patientSettings.getStimulusRadius()!=null?
+                patientSettings.getStimulusRadius():deviceSettings.getStimulusRadius();
     }
 
     public Integer getStimulusSpacing() {
-        return deviceSettings.getStimulusSpacing();
+        return patientSettings.getStimulusSpacing()!=null?
+                patientSettings.getStimulusSpacing():deviceSettings.getStimulusSpacing();
     }
 
     public Map<String, Integer> getInitStimulusDB(EXAM_FIELD_OPTION examFieldOption) {

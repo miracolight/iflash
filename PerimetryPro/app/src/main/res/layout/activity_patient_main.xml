@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context="com.tongchuang.perimetrypro.activity.PatientMainActivity">
+    <!--
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -31,4 +32,12 @@
             android:textColor="#FAFAFA"
             android:text="请调节聚焦旋钮直到可以轻松看清本段文字, 点击按钮开始测试右眼"/>
     </FrameLayout>
+    -->
+    <FrameLayout
+        android:id="@+id/frmPatientMain"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"></FrameLayout>
 </LinearLayout>
