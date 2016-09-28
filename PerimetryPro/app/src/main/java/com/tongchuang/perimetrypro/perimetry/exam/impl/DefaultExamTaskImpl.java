@@ -28,6 +28,7 @@ public class DefaultExamTaskImpl implements ExamTask {
     private List<Point>                 fixations;
     private int                         centerX;
     private int                         centerY;
+    private int                         screenWidth;
     private Map<String, Point>          positionPoints;
     private List<StimulusRunner>        stimulusRunners;
     private int                         maxStimulusDB;
@@ -52,6 +53,8 @@ public class DefaultExamTaskImpl implements ExamTask {
         this.centerY = currFieldOption == ExamSettings.EXAM_FIELD_OPTION.LEFT?
                         examSettings.getLeftFixation().y:examSettings.getRightFixation().y;
         this.currFieldOption = currFieldOption;
+
+        this.screenWidth = examSettings.getLeftFixation().x+examSettings.getRightFixation().x;
     }
 
     public StimulusSelector getStimulusSelector() {
@@ -113,7 +116,7 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     @Override
     public void onResponse() {
-        if (currentStimulus != null && currentStimulus.isStarted()) {
+        if (currentStimulus != null && (currentStimulus.isStarted()||currentStimulus.isStopped())) {
             currentStimulus.setStimulusDetected(true);
         }
     }
@@ -223,5 +226,9 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     public EXAM_FIELD_OPTION getCurrFieldOption() {
         return currFieldOption;
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
     }
 }

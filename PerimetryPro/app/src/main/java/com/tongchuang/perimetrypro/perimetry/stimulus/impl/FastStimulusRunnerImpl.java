@@ -72,6 +72,11 @@ public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perim
         this.stimulusDetected = stimulusDetected;
     }
 
+    public boolean isStimulusDetected() {
+        return stimulusDetected;
+    }
+
+
     @Override
     public void processs() {
 
@@ -112,5 +117,11 @@ public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perim
     @Override
     public boolean isStarted() {
         return state == STATE.STARTED;
+    }
+
+    public boolean isStopped() { return state == STATE.STOPPED; }
+
+    public STATE getState() {
+        return state;
     }
 }

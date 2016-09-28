@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.tongchuang.perimetrypro.activity.ExamActivity;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
+import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
+import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 
 /**
@@ -35,12 +37,25 @@ public class ExamView extends View{
 
         ExamTask exam = examActivity.getExam();
         if (exam.isRunning()) {
-            if (exam.getCurrentStimulusRunner().isStarted()) {
+            StimulusRunner stimulusRunner = exam.getCurrentStimulusRunner();
+
+            if (stimulusRunner.isStarted()) {
                 StimulusInstance stimulus = exam.getCurrentStimulusInstance();
                 setBackgroundColor(stimulus.getBackgroundColor());
                 paint.setColor(stimulus.getStimulusColor());
                 canvas.drawCircle(stimulus.getPoint().x,
                         stimulus.getPoint().y, exam.getStimulusRadius(), paint);
+            }
+
+            if (stimulusRunner.isStimulusDetected()) {
+                paint.setTextSize(exam.getTextDisplaySize()*2);
+                paint.setColor(Color.RED);
+                int xPos = 35; int yPos = 35;
+                if (exam.getCurrFieldOption() == ExamSettings.EXAM_FIELD_OPTION.RIGHT) {
+                    xPos =exam.getScreenWidth()-150;
+                }
+                canvas.drawText(stimulusRunner.getPositionCode(), xPos, yPos, paint);
+                canvas.drawText(Integer.toString(stimulusRunner.getCurrentStimulusDB()), xPos, yPos*2, paint);
             }
 
             paint.setColor(Color.RED);

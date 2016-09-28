@@ -92,7 +92,8 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     // handle the press of "D" (volume_up) on VR bluetooth controller
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode==KeyEvent.KEYCODE_ESCAPE)){
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode==KeyEvent.KEYCODE_ESCAPE
+                ||keyCode == KeyEvent.KEYCODE_BUTTON_A||keyCode == KeyEvent.KEYCODE_BUTTON_B)){
             handleKeyTouchEvent();
             return true;
         }
@@ -102,6 +103,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     private void handleKeyTouchEvent() {
         if (exam.isRunning()){
             exam.onResponse();
+            runOnUiThread(new UIUpdateRunner());
         }
     }
 
@@ -125,20 +127,7 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public void onStimulusChange() {
-        runOnUiThread(new Runnable() {
-                          @Override
-                          public void run() {
-                              StimulusInstance currentStimulus = exam.getCurrentStimulusInstance();
-                              if (currentStimulus != null) {
-                                  WindowManager.LayoutParams layout = getWindow().getAttributes();
-                                  layout.screenBrightness = currentStimulus.getIntensity().getScreenBrightness();
-                                  getWindow().setAttributes(layout);
-                              }
-
-
-                              examView.invalidate();
-                          }
-                      });
+        runOnUiThread(new UIUpdateRunner());
 
     }
 
@@ -153,5 +142,20 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     public int getSecondsToStart() {
         return secondsToStart;
+    }
+
+
+    public class UIUpdateRunner implements Runnable{
+        @Override
+        public void run() {
+            StimulusInstance currentStimulus = exam.getCurrentStimulusInstance();
+            if (currentStimulus != null) {
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = currentStimulus.getIntensity().getScreenBrightness();
+                getWindow().setAttributes(layout);
+            }
+
+            examView.invalidate();
+        }
     }
 }

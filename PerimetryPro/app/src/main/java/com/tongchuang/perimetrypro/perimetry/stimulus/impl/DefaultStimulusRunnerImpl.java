@@ -69,6 +69,10 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
         this.stimulusDetected = stimulusDetected;
     }
 
+    public boolean isStimulusDetected() {
+        return stimulusDetected;
+    }
+
     @Override
     public void processs() {
         StimulusResponse lastResponse = null;
@@ -157,5 +161,11 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
     @Override
     public boolean isStarted() {
         return state == STATE.STARTED;
+    }
+
+    public boolean isStopped() { return state == STATE.STOPPED; }
+
+    public STATE getState() {
+        return state;
     }
 }

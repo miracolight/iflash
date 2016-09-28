@@ -8,27 +8,31 @@ import java.util.List;
  * Created by qingdi on 8/9/16.
  */
 public interface StimulusRunner {
-    String getFinalResult();
+    public String getFinalResult();
     public List<StimulusResponse> getAllResponses();
 
-    boolean isStarted();
+    public boolean isStarted();
+    public boolean isStopped();
 
     public static enum STATE {READY, STARTED, STOPPED, FINISHED};
 
-    boolean isFinished();
+    public boolean isFinished();
 
-    String getPositionCode();
+    public String getPositionCode();
 
     public int getCurrentStimulusDB();
-    void setup();
+    public void setup();
 
-    void start();
+    public void start();
 
-    void stop();
+    public void stop();
 
-    void setStimulusDetected(boolean stimulusDetected);
+    public void setStimulusDetected(boolean stimulusDetected);
+    public boolean isStimulusDetected();
 
-    void processs();
+    public void processs();
 
-    void finish();
+    public void finish();
+
+    public STATE getState() ;
 }

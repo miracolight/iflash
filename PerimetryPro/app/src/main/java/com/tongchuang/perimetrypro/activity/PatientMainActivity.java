@@ -104,7 +104,8 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
     @Override
     // handle the press of "D" (volume_up) on VR bluetooth controller
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode == KeyEvent.KEYCODE_ESCAPE)){
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode == KeyEvent.KEYCODE_ESCAPE||
+                keyCode == KeyEvent.KEYCODE_BUTTON_A||keyCode == KeyEvent.KEYCODE_BUTTON_B)){
             handleKeyTouchEvent();
             return true;
         }
