@@ -17,6 +17,8 @@ import java.util.Random;
  */
 public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
+    private static final int MIN_RUNNER_POOL_SIZE = 5;
+
     private Map<Integer, List<StimulusRunner>> stimulusRunnersByPriorities;
 
     private int currLevel = Integer.MAX_VALUE;
@@ -24,6 +26,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
     private int stimulateCount = 0;
     private int stimulateCountMax = Integer.MAX_VALUE;
+
 
 
     public DefaultStimulusSelectorImpl(ExamTask examTask) {
@@ -63,7 +66,18 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);
             if (runners != null && !runners.isEmpty()) {
-                runner = runners.get(getRandomIndex(runners.size()));
+
+                if (runners.size() < MIN_RUNNER_POOL_SIZE) {
+                    List<StimulusRunner> restAvailableRunners = getRestAvailableRunners(currLevel+1);
+                    int index = getRandomIndex(Math.min(MIN_RUNNER_POOL_SIZE, runners.size()+restAvailableRunners.size()));
+                    if (index < runners.size()) {
+                        runner = runners.get(index);
+                    } else {
+                        runner = restAvailableRunners.get(getRandomIndex(restAvailableRunners.size()));
+                    }
+                } else {
+                    runner = runners.get(getRandomIndex(runners.size()));
+                }
                 System.out.println("aimu_log: level="+currLevel+"; runners.size()="+runners.size()+"; poscode="+runner.getPositionCode());
                 break;
             }
@@ -71,6 +85,16 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
         }
         stimulateCount++;
         return runner;
+    }
+
+    private List<StimulusRunner> getRestAvailableRunners(int currLevel) {
+        List<StimulusRunner> runners = new ArrayList<StimulusRunner>();
+        while (currLevel <= maxLevel) {
+            runners.addAll(stimulusRunnersByPriorities.get(currLevel));
+            currLevel++;
+        }
+        removeFinishedRunners(runners);
+        return runners;
     }
 
     private void removeFinishedRunners(List<StimulusRunner> runners) {

@@ -19,9 +19,11 @@ import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskBuilder;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskListener;
 import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.perimetry.common.Intensity;
+import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 import com.tongchuang.perimetrypro.util.ActivityUtil;
 import com.tongchuang.perimetrypro.util.IntensityUtil;
+import com.tongchuang.perimetrypro.view.ExamStandbyView;
 import com.tongchuang.perimetrypro.view.ExamView;
 
 import org.json.JSONException;
@@ -68,7 +70,15 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
         examView = new ExamView(this);
         examView.setBackgroundColor(IntensityUtil.getBackgroundColor(exam.getExamSettings().getDefaultIntensity()));
-        ((FrameLayout) findViewById(R.id.frmRun)).addView(examView);
+
+        if (exam.getCurrFieldOption() == ExamSettings.EXAM_FIELD_OPTION.LEFT) {
+            ((FrameLayout) findViewById(R.id.frmLeft)).addView(examView);
+            ((FrameLayout) findViewById(R.id.frmRight)).addView(new ExamStandbyView(this));
+        } else {
+            ((FrameLayout) findViewById(R.id.frmRight)).addView(examView);
+            ((FrameLayout) findViewById(R.id.frmLeft)).addView(new ExamStandbyView(this));
+        }
+
 
         startExam();
     }

@@ -41,7 +41,7 @@ public class ExamUtil {
         }
 
         x += (currFieldOption==ExamSettings.EXAM_FIELD_OPTION.LEFT)?
-                examSettings.getLeftFixation().x:examSettings.getRightFixation().x;
+                examSettings.getLeftFixation().x:((examSettings.getRightFixation().x-examSettings.getLeftFixation().x)/2);
         y += examSettings.getLeftFixation().y;
         return new Point(x, y);
     }

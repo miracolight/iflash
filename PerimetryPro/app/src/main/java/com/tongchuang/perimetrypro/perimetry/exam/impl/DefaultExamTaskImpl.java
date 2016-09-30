@@ -46,12 +46,13 @@ public class DefaultExamTaskImpl implements ExamTask {
         this.minStimulusDB = examSettings.getMinStimulusDB();
         this.maxStimulusDB = examSettings.getMaxStimulusDB();
 
-        this.fixations = Collections.singletonList(currFieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT?
-                                examSettings.getLeftFixation():examSettings.getRightFixation());
         this.centerX = currFieldOption == ExamSettings.EXAM_FIELD_OPTION.LEFT?
-                        examSettings.getLeftFixation().x:examSettings.getRightFixation().x;
+                        examSettings.getLeftFixation().x:(examSettings.getRightFixation().x-examSettings.getLeftFixation().x)/2;
         this.centerY = currFieldOption == ExamSettings.EXAM_FIELD_OPTION.LEFT?
                         examSettings.getLeftFixation().y:examSettings.getRightFixation().y;
+
+        this.fixations = Collections.singletonList(new Point(centerX, centerY));
+
         this.currFieldOption = currFieldOption;
 
         this.screenWidth = examSettings.getLeftFixation().x+examSettings.getRightFixation().x;

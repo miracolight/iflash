@@ -51,9 +51,6 @@ public class ExamView extends View{
                 paint.setTextSize(exam.getTextDisplaySize()*2);
                 paint.setColor(Color.RED);
                 int xPos = 35; int yPos = 35;
-                if (exam.getCurrFieldOption() == ExamSettings.EXAM_FIELD_OPTION.RIGHT) {
-                    xPos =exam.getScreenWidth()-150;
-                }
                 canvas.drawText(stimulusRunner.getPositionCode(), xPos, yPos, paint);
                 canvas.drawText(Integer.toString(stimulusRunner.getCurrentStimulusDB()), xPos, yPos*2, paint);
             }
