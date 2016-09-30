@@ -91,6 +91,14 @@ public class DefaultStimulusRunnerImpl implements com.tongchuang.perimetrypro.pe
             } else {
                 nextStimulusDB = stimulusDB-dbStep;
             }
+            if (nextStimulusDB > examTask.getMaxStimulusDB()) {
+                nextStimulusDB = examTask.getMaxStimulusDB();
+                dbStep = 1;
+            }
+            if (nextStimulusDB < examTask.getMinStimulusDB()) {
+                nextStimulusDB = examTask.getMinStimulusDB();
+                dbStep = 1;
+            }
         } else {
             if (dbStep==1) {
                 if (stimulusDetected) {

@@ -140,6 +140,10 @@ public class DefaultExamTaskImpl implements ExamTask {
         String positionCode = currentStimulus.getPositionCode();
         StimulusInstance instance = new StimulusInstance(positionCode, positionPoints.get(positionCode),
                 examSettings.getIntensities().get(stimulusDB));
+
+        if (instance.getIntensity() == null) {
+            System.out.println("aimuLog-error: stimulusDB="+stimulusDB+" is invalid");
+        }
         return instance;
     }
 
