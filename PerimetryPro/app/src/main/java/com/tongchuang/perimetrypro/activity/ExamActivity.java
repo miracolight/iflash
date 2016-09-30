@@ -76,7 +76,8 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     public boolean onTouchEvent(MotionEvent event){
         switch(event.getAction()){
-            case MotionEvent.ACTION_DOWN:
+//            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP:
                 handleKeyTouchEvent();
                 break;
         }
@@ -91,13 +92,21 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     // handle the press of "D" (volume_up) on VR bluetooth controller
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    /*public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode==KeyEvent.KEYCODE_ESCAPE
                 ||keyCode == KeyEvent.KEYCODE_BUTTON_A||keyCode == KeyEvent.KEYCODE_BUTTON_B)){
             handleKeyTouchEvent();
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }*/
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN||keyCode==KeyEvent.KEYCODE_ESCAPE
+                ||keyCode == KeyEvent.KEYCODE_BUTTON_A||keyCode == KeyEvent.KEYCODE_BUTTON_B)){
+            handleKeyTouchEvent();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     private void handleKeyTouchEvent() {

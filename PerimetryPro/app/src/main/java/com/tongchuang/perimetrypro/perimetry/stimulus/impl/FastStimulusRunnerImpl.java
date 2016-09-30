@@ -83,7 +83,7 @@ public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perim
         allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
 
         if (stimulusDetected) {
-            finalResult = Integer.toString(stimulusDB-1);
+            finalResult = Integer.toString(stimulusDB);
             finish();
         } else {
             stimulusDB = stimulusDB-1;
