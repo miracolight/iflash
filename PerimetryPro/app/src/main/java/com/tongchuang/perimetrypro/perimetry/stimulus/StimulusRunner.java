@@ -14,6 +14,8 @@ public interface StimulusRunner {
     public boolean isStarted();
     public boolean isStopped();
 
+    public void setForTraining(boolean forTraining);
+
     public static enum STATE {READY, STARTED, STOPPED, FINISHED};
 
     public boolean isFinished();

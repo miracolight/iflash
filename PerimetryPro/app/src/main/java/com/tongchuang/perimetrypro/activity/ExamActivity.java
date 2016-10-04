@@ -71,12 +71,15 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
         examView = new ExamView(this);
         examView.setBackgroundColor(IntensityUtil.getBackgroundColor(exam.getExamSettings().getDefaultIntensity()));
 
+        ExamStandbyView examStandbyView = new ExamStandbyView(this);
+        examStandbyView.setBackgroundColor(IntensityUtil.getBackgroundColor(exam.getExamSettings().getDefaultIntensity()));
+
         if (exam.getCurrFieldOption() == ExamSettings.EXAM_FIELD_OPTION.LEFT) {
             ((FrameLayout) findViewById(R.id.frmLeft)).addView(examView);
-            ((FrameLayout) findViewById(R.id.frmRight)).addView(new ExamStandbyView(this));
+            ((FrameLayout) findViewById(R.id.frmRight)).addView(examStandbyView);
         } else {
             ((FrameLayout) findViewById(R.id.frmRight)).addView(examView);
-            ((FrameLayout) findViewById(R.id.frmLeft)).addView(new ExamStandbyView(this));
+            ((FrameLayout) findViewById(R.id.frmLeft)).addView(examStandbyView);
         }
 
 

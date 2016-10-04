@@ -23,7 +23,7 @@ public class ExamStandbyView extends View{
 
     @Override
     protected void onDraw(Canvas canvas) {
-        setBackgroundColor(Color.BLACK);
+//        setBackgroundColor(Color.BLACK);
     }
 
 }

@@ -18,6 +18,8 @@ import java.util.Random;
 public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
     private static final int MIN_RUNNER_POOL_SIZE = 5;
+    private static final int TRAINING_STIMULUS_COUNT=5;
+    private int currTrainingShown = 0;
 
     private Map<Integer, List<StimulusRunner>> stimulusRunnersByPriorities;
 
@@ -26,6 +28,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
     private int stimulateCount = 0;
     private int stimulateCountMax = Integer.MAX_VALUE;
+
 
 
 
@@ -62,6 +65,18 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
     @Override
     public StimulusRunner getNextStimulus() {
         StimulusRunner runner = null;
+
+        if (currTrainingShown < TRAINING_STIMULUS_COUNT) {
+            List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
+            if (runners != null && !runners.isEmpty()) {
+                runner = runners.get(getRandomIndex(runners.size()));
+            }
+            runner.setForTraining(true);
+            currTrainingShown++;
+            System.out.println("aimu_log: currTrainingShown="+currTrainingShown);
+            return runner;
+        }
+
         while (currLevel <= maxLevel && stimulateCount < stimulateCountMax) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);

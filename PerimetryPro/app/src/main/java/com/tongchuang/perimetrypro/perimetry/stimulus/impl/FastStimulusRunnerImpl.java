@@ -2,6 +2,7 @@ package com.tongchuang.perimetrypro.perimetry.stimulus.impl;
 
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusResponse;
+import com.tongchuang.perimetrypro.util.ExamUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by qingdi on 8/8/16.
  */
-public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner {
+public class FastStimulusRunnerImpl extends AbstractStimulusRunner {
     @Override
     public boolean isFinished() {
         return state == STATE.FINISHED;
@@ -45,6 +46,9 @@ public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perim
 
     @Override
     public int getCurrentStimulusDB() {
+        if (inTrainingMode) {
+            return ExamUtil.getStimulusDBForTraining(examTask, stimulusDB);
+        }
         return stimulusDB;
     }
 
@@ -79,6 +83,13 @@ public class FastStimulusRunnerImpl implements com.tongchuang.perimetrypro.perim
 
     @Override
     public void processs() {
+
+        if (inTrainingMode) {
+            state = STATE.READY;
+            stimulusDetected = false;
+            inTrainingMode = false;
+            return;
+        }
 
         allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
 

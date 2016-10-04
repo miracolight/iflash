@@ -2,6 +2,7 @@ package com.tongchuang.perimetrypro.util;
 
 import android.graphics.Point;
 
+import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusResponse;
 
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  */
 public class ExamUtil {
 
+    private static final int TRAIN_DB_CONST = 10;
     private static Pattern POS_CODE_PATTERN = Pattern.compile("q([0-9]+)r([0-9]+)c([0-9]+)");
     public static Point getPoint(String posCode, ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption) {
 
@@ -68,5 +70,13 @@ public class ExamUtil {
 
         return result;
 
+    }
+
+    public static int getStimulusDBForTraining(ExamTask examTask, int currDB) {
+        int trainingDB = currDB - TRAIN_DB_CONST;
+        if (trainingDB < examTask.getMinStimulusDB()) {
+            trainingDB = examTask.getMinStimulusDB();
+        }
+        return trainingDB;
     }
 }
