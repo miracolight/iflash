@@ -11,8 +11,16 @@ public class PDemoGenerator implements PatternGenerator {
 
     String[] positionCodesRight = {"q1r1c1", "q2r1c1", "q3r1c1", "q4r1c1"};
 
+    String blindSpotLeft = "q3r1c1";
+    String blindSpotRight = "q4r1c1";
+
     @Override
     public String[] getStimulusPositionCodes(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
         return (fieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT)? positionCodesLeft : positionCodesRight;
+    }
+
+    @Override
+    public String getBlindSpot(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
+        return (fieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT)? blindSpotLeft : blindSpotRight;
     }
 }

@@ -29,6 +29,8 @@ public interface ExamTask extends Runnable{
 
     public void setExamTaskListeners(List<ExamTaskListener> examTaskListeners);
 
+    public StimulusRunner getBlindSpotRunner();
+
     public static enum STATE {READY, RUNNING, FINISHED};
 
     public boolean isRunning();

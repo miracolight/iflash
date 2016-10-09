@@ -30,13 +30,13 @@ public class ResultServiceImpl implements ResultService {
 
     @Override
     public void saveResult(ExamResult result, final ResultServiceResponseHandler responseHandler) {
-        dbHelper.addExamResult(result);
+      //  dbHelper.addExamResult(result);
         saveToServer(result, dbHelper, responseHandler);
     }
 
 
     public void saveToServer(ExamResult result, final VisionDBSQLiteHelper dbHelper, final ResultServiceResponseHandler responseHandler) {
-        String url = result.getPatientId()+"/perimetrytests?apiKey=rock2016";
+        String url = "patients/"+result.getPatientId()+"/tests?apiKey=rock2016";
 
 
         JSONObject jsonObject = new JSONObject();

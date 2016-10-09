@@ -30,7 +30,7 @@ public class ActivityUtil {
 
     public static String getDeviceID(Context context) {
         final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
+/*
         final String tmDevice, tmSerial, tmPhone, androidId;
         tmDevice = "" + tm.getDeviceId();
         tmSerial = "" + tm.getSimSerialNumber();
@@ -39,6 +39,8 @@ public class ActivityUtil {
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
         String deviceId = deviceUuid.toString();
         return deviceId;
+        */
+        return tm.getDeviceId();
     }
 
     public static void setScreenBrightness(AppCompatActivity activity, ExamSettings examSettings) {

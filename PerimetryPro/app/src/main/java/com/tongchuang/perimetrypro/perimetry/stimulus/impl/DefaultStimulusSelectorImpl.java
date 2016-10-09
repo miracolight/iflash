@@ -23,13 +23,17 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
 
     private Map<Integer, List<StimulusRunner>> stimulusRunnersByPriorities;
 
+    private StimulusRunner blindSpotRunner;
+    private double      blindSpotWeight = 0.1d;
+
     private int currLevel = Integer.MAX_VALUE;
     private int maxLevel = Integer.MIN_VALUE;
 
     private int stimulateCount = 0;
     private int stimulateCountMax = Integer.MAX_VALUE;
 
-
+    private Random blindSpotCheckRandom = new Random();
+    private Random runnerRandom = new Random();
 
 
     public DefaultStimulusSelectorImpl(ExamTask examTask) {
@@ -37,6 +41,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
         ExamSettings examSettings = examTask.getExamSettings();
         Map<String, Integer> priorities = examSettings.getStimulusPriorities(examTask.getCurrFieldOption());
         List<StimulusRunner> runners = examTask.getStimulusRunners();
+        blindSpotRunner = examTask.getBlindSpotRunner();
 
         for (StimulusRunner r : runners) {
             Integer priority = priorities.get(r.getPositionCode());
@@ -77,6 +82,11 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
             return runner;
         }
 
+        if (showBlindSpot()) {
+            System.out.println("aimu_log: showBlindSpot=true");
+            return blindSpotRunner;
+        }
+
         while (currLevel <= maxLevel && stimulateCount < stimulateCountMax) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);
@@ -102,6 +112,16 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
         return runner;
     }
 
+    private boolean showBlindSpot() {
+        double r = blindSpotCheckRandom.nextDouble();
+        System.out.println("aimu_log: blindSpot random = "+r);
+        if (r < blindSpotWeight) {
+            return true;
+        }
+        return false;
+    }
+
+
     private List<StimulusRunner> getRestAvailableRunners(int currLevel) {
         List<StimulusRunner> runners = new ArrayList<StimulusRunner>();
         while (currLevel <= maxLevel) {
@@ -126,7 +146,6 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector{
     }
 
     private int getRandomIndex(int range) {
-        Random randomGenerator = new Random();
-        return randomGenerator.nextInt(range);
+        return runnerRandom.nextInt(range);
     }
 }

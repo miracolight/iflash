@@ -31,6 +31,7 @@ public class DefaultExamTaskImpl implements ExamTask {
     private int                         screenWidth;
     private Map<String, Point>          positionPoints;
     private List<StimulusRunner>        stimulusRunners;
+    private StimulusRunner              blindSpotRunner;
     private int                         maxStimulusDB;
     private int                         minStimulusDB;
     private StimulusRunner              currentStimulus;
@@ -129,6 +130,15 @@ public class DefaultExamTaskImpl implements ExamTask {
     @Override
     public List<StimulusRunner> getStimulusRunners() {
         return stimulusRunners;
+    }
+
+    @Override
+    public StimulusRunner getBlindSpotRunner() {
+        return blindSpotRunner;
+    }
+
+    public void setBlindSpotRunner(StimulusRunner blindSpotRunner) {
+        this.blindSpotRunner = blindSpotRunner;
     }
 
     public StimulusRunner getCurrentStimulusRunner() {

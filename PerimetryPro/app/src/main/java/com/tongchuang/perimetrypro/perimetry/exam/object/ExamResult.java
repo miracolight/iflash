@@ -36,6 +36,9 @@ public class ExamResult {
     private Map<String, String> examResultRight;
     private Map<String, String> allResponsesRight;
 
+    private String     blindSpotCheckedLeft;
+    private String     blindSpotCheckedRight;
+
     public ExamResult() {
     }
 
@@ -60,12 +63,14 @@ public class ExamResult {
         examResultLeft = new HashMap<String, String>();
         allResponsesLeft = new HashMap<String, String>();
         addResult(exam, examResultLeft, allResponsesLeft);
+        blindSpotCheckedLeft = getBlindSpotStatus(exam);
     }
 
     public void addRightResult(ExamTask exam) {
         examResultRight = new HashMap<String, String>();
         allResponsesRight = new HashMap<String, String>();
         addResult(exam, examResultRight, allResponsesRight);
+        blindSpotCheckedRight = getBlindSpotStatus(exam);
     }
 
     private void addResult(ExamTask exam, Map<String, String> examResult, Map<String, String> allResponses) {
@@ -74,6 +79,32 @@ public class ExamResult {
             examResult.put(r.getPositionCode(), r.getFinalResult());
             allResponses.put(r.getPositionCode(), ExamUtil.fromAllResponses(r.getAllResponses()));
         }
+
+        if (exam.getBlindSpotRunner() != null) {
+            StimulusRunner r = exam.getBlindSpotRunner();
+            examResult.put(r.getPositionCode(), r.getFinalResult());
+            allResponses.put(r.getPositionCode(), ExamUtil.fromAllResponses(r.getAllResponses()));
+        }
+    }
+
+
+    private String getBlindSpotStatus(ExamTask exam) {
+        String result =null;
+
+        if (exam.getBlindSpotRunner() != null && exam.getBlindSpotRunner().getAllResponses() != null) {
+            int total = 0;
+            int detected = 0;
+            for (StimulusResponse r : exam.getBlindSpotRunner().getAllResponses()) {
+                if (r.isDetected()) {
+                    detected++;
+                }
+                total++;
+            }
+
+            result = detected+"/"+total;
+        }
+
+        return result;
     }
 
     //getters & setters
@@ -140,6 +171,8 @@ public class ExamResult {
     public void setDeviceSettingsVersion(String deviceSettingsVersion) {
         this.deviceSettingsVersion = deviceSettingsVersion;
     }
+
+
 
     public String toJSon() {
         Gson gson = new Gson();

@@ -11,4 +11,6 @@ public interface PatternGenerator {
     public static enum PatternType {P24_2, P30_2, PDEMO};
 
     public String[] getStimulusPositionCodes(ExamSettings.EXAM_FIELD_OPTION fieldOption);
+
+    public String   getBlindSpot(ExamSettings.EXAM_FIELD_OPTION fieldOption);
 }

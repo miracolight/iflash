@@ -41,8 +41,18 @@ public class P24_2Generator implements PatternGenerator {
             "q4r3c1","q4r3c2","q4r3c3",
             "q4r4c1","q4r4c2"};
 
+    String blindSpotLeft = "q3r1c3";
+    String blindSpotRight = "q4r1c3";
+
     @Override
     public String[] getStimulusPositionCodes(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
         return (fieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT)? positionCodesLeft : positionCodesRight;
     }
+
+    @Override
+    public String getBlindSpot(ExamSettings.EXAM_FIELD_OPTION fieldOption) {
+        return (fieldOption== ExamSettings.EXAM_FIELD_OPTION.LEFT)? blindSpotLeft : blindSpotRight;
+    }
+
+
 }
