@@ -3,6 +3,7 @@ package com.tongchuang.perimetrypro.util;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 
 import com.tongchuang.perimetrypro.perimetry.common.Intensity;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
+import com.tongchuang.perimetrypro.perimetry.settings.SettingService;
 
 import java.util.UUID;
 
@@ -30,6 +32,19 @@ public class ActivityUtil {
 
     public static String getDeviceID(Context context) {
         final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        String deviceId = tm.getDeviceId();
+        if (deviceId == null || deviceId.isEmpty()) {
+            // load deviceSettings
+            SharedPreferences sharedPref = context.getSharedPreferences(SettingService.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+            deviceId = sharedPref.getString(SettingService.PROP_NAME_DEVICE_ID, "");
+            if (deviceId.isEmpty()) {
+                deviceId = UUID.randomUUID().toString();
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(SettingService.PROP_NAME_DEVICE_ID, deviceId);
+                editor.commit();
+            }
+        }
 /*
         final String tmDevice, tmSerial, tmPhone, androidId;
         tmDevice = "" + tm.getDeviceId();
@@ -40,7 +55,7 @@ public class ActivityUtil {
         String deviceId = deviceUuid.toString();
         return deviceId;
         */
-        return tm.getDeviceId();
+        return deviceId;
     }
 
     public static void setScreenBrightness(AppCompatActivity activity, ExamSettings examSettings) {

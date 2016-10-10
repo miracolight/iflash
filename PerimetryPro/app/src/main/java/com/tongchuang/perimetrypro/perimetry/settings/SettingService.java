@@ -10,6 +10,7 @@ import com.tongchuang.perimetrypro.user.UserServiceResponseHandler;
  */
 public interface SettingService {
     public static final String SHARED_PREF_NAME = "PERIMETRY_SETTINGS";
+    public static final String  PROP_NAME_DEVICE_ID = "DEVICE_ID";
     public static final String  PROP_NAME_DEVICE_SETTINGS = "DEVICE_SETTINGS";
     public static final String  PROP_NAME_DEVICE_SETTINGS_LAST_UPDATE_DATE = "DEVICE_SETTINGS_LAST_UPDATE_DATE";
     public static final String  PROP_NAME_DEFAULT_PATIENT_SETTINGS = "DEFAULT_PATIENT_SETTINGS";
