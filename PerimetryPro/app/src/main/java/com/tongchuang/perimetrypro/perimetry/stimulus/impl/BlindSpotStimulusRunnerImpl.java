@@ -1,5 +1,7 @@
 package com.tongchuang.perimetrypro.perimetry.stimulus.impl;
 
+import android.content.Context;
+
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusResponse;
 import com.tongchuang.perimetrypro.util.ExamUtil;
@@ -20,8 +22,10 @@ public class BlindSpotStimulusRunnerImpl extends AbstractStimulusRunner  {
     private String      finalResult;
 
     private List<StimulusResponse>    allResponses;
+    private BlindSpotPostProcessor postProcessor;
 
-    public BlindSpotStimulusRunnerImpl(String positionCode, ExamTask examTask) {
+    public BlindSpotStimulusRunnerImpl(BlindSpotPostProcessor postProcessor, String positionCode, ExamTask examTask) {
+        this.postProcessor = postProcessor;
         this.positionCode = positionCode;
         this.stimulusDB = examTask.getMinStimulusDB();
         this.examTask = examTask;
@@ -80,12 +84,13 @@ public class BlindSpotStimulusRunnerImpl extends AbstractStimulusRunner  {
        // System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
         allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
 
-
+        postProcessor.postProcess(stimulusDetected);
 
         if (state == STATE.STOPPED) {
             state = STATE.READY;
             stimulusDetected = false;
         }
+
     }
 
     @Override

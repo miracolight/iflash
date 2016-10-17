@@ -1,9 +1,7 @@
 package com.tongchuang.perimetrypro.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -13,8 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.tongchuang.perimetrypro.R;
 import com.tongchuang.perimetrypro.context.GlobalContext;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
@@ -23,19 +19,11 @@ import com.tongchuang.perimetrypro.perimetry.exam.object.ExamResult;
 import com.tongchuang.perimetrypro.perimetry.result.ResultService;
 import com.tongchuang.perimetrypro.perimetry.result.ResultServiceResponseHandler;
 import com.tongchuang.perimetrypro.perimetry.result.impl.ResultServiceImpl;
-import com.tongchuang.perimetrypro.perimetry.settings.DeviceSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
-import com.tongchuang.perimetrypro.perimetry.settings.PatientSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.SettingService;
-import com.tongchuang.perimetrypro.perimetry.settings.SettingServiceResponseHandler;
 import com.tongchuang.perimetrypro.perimetry.settings.impl.SettingServiceImpl;
-import com.tongchuang.perimetrypro.user.UserInfo;
 import com.tongchuang.perimetrypro.user.UserService;
-import com.tongchuang.perimetrypro.user.UserServiceResponseHandler;
 import com.tongchuang.perimetrypro.user.impl.UserServiceImpl;
-import com.tongchuang.perimetrypro.util.ActivityUtil;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             ExamTask exam = null;
             try {
-                exam = ExamTaskBuilder.build(GlobalContext.getExamSettings(),fieldOption);
+                exam = ExamTaskBuilder.build(this, GlobalContext.getExamSettings(),fieldOption);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast toast = Toast.makeText(getApplicationContext(),

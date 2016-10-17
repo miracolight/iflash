@@ -132,7 +132,7 @@ public class PatientMainActivity extends AppCompatActivity  implements View.OnTo
         if (!examStarted) {
             try {
                 Intent i = new Intent(this, ExamActivity.class);
-                exam = ExamTaskBuilder.build(GlobalContext.getExamSettings(),currFieldOption);
+                exam = ExamTaskBuilder.build(this, GlobalContext.getExamSettings(),currFieldOption);
                 GlobalContext.setExamTask(exam);
                 startActivityForResult(i, EXAM_REQUEST_CODE);
                 examStarted = true;

@@ -1,13 +1,16 @@
 package com.tongchuang.perimetrypro.perimetry.exam;
 
+import android.content.Context;
 import android.graphics.Point;
 
+import com.tongchuang.perimetrypro.activity.PatientMainActivity;
 import com.tongchuang.perimetrypro.perimetry.exam.impl.DefaultExamTaskImpl;
 import com.tongchuang.perimetrypro.perimetry.pattern.PatternGenerator;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.pattern.PatternGeneratorFactory;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
+import com.tongchuang.perimetrypro.perimetry.stimulus.impl.BlindSpotPostProcessor;
 import com.tongchuang.perimetrypro.perimetry.stimulus.impl.BlindSpotStimulusRunnerImpl;
 import com.tongchuang.perimetrypro.util.ExamUtil;
 
@@ -23,7 +26,7 @@ import java.util.Map;
  */
 public class ExamTaskBuilder {
 
-    public static ExamTask build(ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption)
+    public static ExamTask build(Context context, ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
 
         DefaultExamTaskImpl exam = new DefaultExamTaskImpl(examSettings, currFieldOption);
@@ -38,6 +41,7 @@ public class ExamTaskBuilder {
                                         .getConstructor(String.class, int.class, ExamTask.class);
 
         Map<String, Integer> initStimulusDB = examSettings.getInitStimulusDB(currFieldOption);
+        BlindSpotPostProcessor blindSpotPostProcessor = new BlindSpotPostProcessor(context);
         List<StimulusRunner> stimulusRunners = new ArrayList<StimulusRunner>();
         Map<String, Point> positionPoints = new HashMap<String, Point>();
         for (String code : stimulusPositionCodes) {
@@ -45,7 +49,7 @@ public class ExamTaskBuilder {
             positionPoints.put(code, ExamUtil.getPoint(code, examSettings, currFieldOption));
 
             if (code.equals(blindSpot)) {
-                exam.setBlindSpotRunner(new BlindSpotStimulusRunnerImpl(code, exam));
+                exam.setBlindSpotRunner(new BlindSpotStimulusRunnerImpl(blindSpotPostProcessor, code, exam));
             } else {
                 StimulusRunner r = (StimulusRunner)stimulusRunnerConstructor.newInstance(code, db==null?minStimulusDB:db.intValue(), exam);
                 stimulusRunners.add(r);
