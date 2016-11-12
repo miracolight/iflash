@@ -1,11 +1,15 @@
 package com.tongchuang.perimetrypro.util;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.AndroidCharacter;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -19,6 +23,7 @@ import java.util.UUID;
  * Created by qingdi on 3/10/16.
  */
 public class ActivityUtil {
+    Integer  PERMISSION_READ_STATE = 1;
     public static void hideStatusBar(AppCompatActivity activity) {
         View decorView = activity.getWindow().getDecorView();
         // Hide the status bar.
@@ -31,9 +36,14 @@ public class ActivityUtil {
     }
 
     public static String getDeviceID(Context context) {
+        String deviceId;
         final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+/*        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_READ_STATE);
+            }
+*/
+        deviceId = tm.getDeviceId();
 
-        String deviceId = tm.getDeviceId();
         if (deviceId == null || deviceId.isEmpty()) {
             // load deviceSettings
             SharedPreferences sharedPref = context.getSharedPreferences(SettingService.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -64,4 +74,6 @@ public class ActivityUtil {
         layout.screenBrightness = defaultIntensity.getScreenBrightness();
         activity.getWindow().setAttributes(layout);
     }
+
+
 }

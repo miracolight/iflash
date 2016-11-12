@@ -31,6 +31,8 @@ public interface ExamTask extends Runnable{
 
     public StimulusRunner getBlindSpotRunner();
 
+    public StimulusRunner getFalseNegativeRunner();
+
     public static enum STATE {READY, RUNNING, FINISHED};
 
     public boolean isRunning();

@@ -5,16 +5,12 @@ import android.graphics.Point;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskListener;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
-import com.tongchuang.perimetrypro.perimetry.stimulus.impl.DefaultStimulusRunnerImpl;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings.EXAM_FIELD_OPTION;
-import com.tongchuang.perimetrypro.perimetry.common.Intensity;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +28,7 @@ public class DefaultExamTaskImpl implements ExamTask {
     private Map<String, Point>          positionPoints;
     private List<StimulusRunner>        stimulusRunners;
     private StimulusRunner              blindSpotRunner;
+    private StimulusRunner              falseNegativeRunner;
     private int                         maxStimulusDB;
     private int                         minStimulusDB;
     private StimulusRunner              currentStimulus;
@@ -139,6 +136,15 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     public void setBlindSpotRunner(StimulusRunner blindSpotRunner) {
         this.blindSpotRunner = blindSpotRunner;
+    }
+
+    @Override
+    public StimulusRunner getFalseNegativeRunner() {
+        return falseNegativeRunner;
+    }
+
+    public void setFalseNegativeRunner(StimulusRunner falseNegativeRunner) {
+        this.falseNegativeRunner = falseNegativeRunner;
     }
 
     public StimulusRunner getCurrentStimulusRunner() {

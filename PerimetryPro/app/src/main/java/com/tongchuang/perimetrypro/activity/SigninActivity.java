@@ -1,7 +1,10 @@
 package com.tongchuang.perimetrypro.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -35,14 +38,34 @@ public class SigninActivity extends AppCompatActivity {
     private SettingService settingService = new SettingServiceImpl();
     private boolean scannerOn = false;
     private boolean processingBarcode = false;
-
+    private static final int PERMISSION_READ_STATE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("in onCreate...");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_READ_STATE);
+        }
         GlobalContext.setDeviceId(ActivityUtil.getDeviceID(this));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_READ_STATE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }
+                else
+                {
+                    Toast.makeText(getApplication(), "Permission required",Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
     }
 
 

@@ -55,7 +55,8 @@ public class ExamView extends View{
                 canvas.drawText(Integer.toString(stimulusRunner.getCurrentStimulusDB()), xPos, yPos*2, paint);
             }
 
-            paint.setColor(Color.RED);
+           // paint.setColor(Color.RED);
+            paint.setColor(Color.rgb(255, 165,0));
             for (Point p : exam.getFixations()) {
                 canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
             }
@@ -65,15 +66,16 @@ public class ExamView extends View{
             canvas.drawText("测试结束", exam.getCenterX(), exam.getCenterY(), paint);
         }
         else {
-            paint.setColor(Color.RED);
+            //paint.setColor(Color.RED);
+            paint.setColor(Color.rgb(255, 165,0));
             for (Point p : exam.getFixations()) {
                 canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
             }
             int secondsToStart = examActivity.getSecondsToStart();
             if (secondsToStart > 0) {
                 paint.setColor(Color.WHITE);
-                paint.setTextSize(exam.getTextDisplaySize()*2);
-                canvas.drawText(Integer.toString(secondsToStart), exam.getCenterX(), exam.getCenterY(), paint);
+                paint.setTextSize(exam.getTextDisplaySize()*4);
+                canvas.drawText(Integer.toString(secondsToStart), exam.getCenterX()-(int)(exam.getTextDisplaySize()), exam.getCenterY()-(int)(exam.getTextDisplaySize()*1.5), paint);
             }
         }
     }

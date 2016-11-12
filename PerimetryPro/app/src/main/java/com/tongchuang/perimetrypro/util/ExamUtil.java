@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class ExamUtil {
 
-    private static final int TRAIN_DB_CONST = 10;
+    private static final int TRAIN_DB_CONST = 15;   //10;
     private static Pattern POS_CODE_PATTERN = Pattern.compile("q([0-9]+)r([0-9]+)c([0-9]+)");
     public static Point getPoint(String posCode, ExamSettings examSettings, ExamSettings.EXAM_FIELD_OPTION currFieldOption) {
 

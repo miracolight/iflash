@@ -16,15 +16,14 @@ import java.util.List;
 
 /**
  * Created by qingdi on 8/8/16.
- * Updated by Ming on 11/8/2016  step size, false negative...
  */
-public class DefaultStimulusRunnerImpl extends AbstractStimulusRunner  {
+public class DefaultStimulusRunnerImplold extends AbstractStimulusRunner  {
     @Override
     public boolean isFinished() {
         return state == STATE.FINISHED;
     }
 
-    public static int INIT_DB_STEP = 4;
+    public static int INIT_DB_STEP = 2;
     private String      positionCode;
     private int         stimulusDB;
     private boolean     stimulusDetected;
@@ -33,14 +32,14 @@ public class DefaultStimulusRunnerImpl extends AbstractStimulusRunner  {
     private int         dbStep;
     private String      finalResult;
     private StimulusRunner falseNegativeRunner;
-  //  private FalseNegativePostProcessor postProcessor;
+    //  private FalseNegativePostProcessor postProcessor;
     private List<StimulusResponse>    allResponses;
 
     private SoundPool soundPool;
     private int         sourceId;
     Context context;
 
-    public DefaultStimulusRunnerImpl(String positionCode, int initStimulusDB, ExamTask examTask) {
+    public DefaultStimulusRunnerImplold(String positionCode, int initStimulusDB, ExamTask examTask) {
         this.positionCode = positionCode;
         this.stimulusDB = initStimulusDB;
         this.examTask = examTask;
@@ -103,12 +102,12 @@ public class DefaultStimulusRunnerImpl extends AbstractStimulusRunner  {
             falseNegativeRunner.getAllResponses().add(new StimulusResponse(stimulusDB, stimulusDetected));
             state = STATE.READY;
             inTrainingMode = false;
- //            soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 5);
-   //         sourceId = soundPool.load(context, R.raw.warning, 0);
-     //       if (!stimulusDetected) {
-       //         int playId = soundPool.play(sourceId, 2, 2, 0, 0, 1);
-         //       System.out.println("aimu_log: soundPool playId="+playId);
-        //    }
+            //            soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 5);
+            //         sourceId = soundPool.load(context, R.raw.warning, 0);
+            //       if (!stimulusDetected) {
+            //         int playId = soundPool.play(sourceId, 2, 2, 0, 0, 1);
+            //       System.out.println("aimu_log: soundPool playId="+playId);
+            //    }
 
             return;
         }
@@ -131,19 +130,19 @@ public class DefaultStimulusRunnerImpl extends AbstractStimulusRunner  {
             }
             if (nextStimulusDB > examTask.getMaxStimulusDB()) {
                 nextStimulusDB = examTask.getMaxStimulusDB();
-                dbStep = 2;  // 1;
+                dbStep = 1;
             }
             if (nextStimulusDB < examTask.getMinStimulusDB()) {
                 nextStimulusDB = examTask.getMinStimulusDB();
-                dbStep = 2;  // 1;
+                dbStep = 1;
             }
         } else {
-            if (dbStep==2) {
+            if (dbStep==1) {
                 if (stimulusDetected) {
                     if (stimulusDB == examTask.getMaxStimulusDB()) {
                         finalResult = Integer.toString(stimulusDB) + "+";
                     } else {
-                        finalResult = Integer.toString(stimulusDB + 1);  // +1 because step is changed to 4 / 2
+                        finalResult = Integer.toString(stimulusDB);
                     }
                 } else {
                     if (stimulusDB == examTask.getMinStimulusDB()) {
@@ -156,29 +155,29 @@ public class DefaultStimulusRunnerImpl extends AbstractStimulusRunner  {
             } else {
                 if (stimulusDetected) {
                     if (!lastResponse.isDetected()) {
-                        dbStep = 2;  // 1;
+                        dbStep = 1;
 
                     }
                     nextStimulusDB = stimulusDB+dbStep;
                     if (nextStimulusDB > examTask.getMaxStimulusDB()) {
                         nextStimulusDB = examTask.getMaxStimulusDB();
-                        dbStep = 2;  // 1;
+                        dbStep = 1;
                     }
                 } else {
                     if (lastResponse.isDetected()) {
-                        dbStep = 2;  // 1;
+                        dbStep = 1;
 
                     }
                     nextStimulusDB = stimulusDB-dbStep;
                     if (nextStimulusDB < examTask.getMinStimulusDB()) {
                         nextStimulusDB = examTask.getMinStimulusDB();
-                        dbStep = 2;  // 1;
+                        dbStep = 1;
                     }
                 }
             }
         }
 
-       // System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
+        // System.out.println("aimu_log: posCode="+positionCode+"; stimulusDB="+stimulusDB+"; nextStimulusDB="+nextStimulusDB+"; detected="+stimulusDetected);
         allResponses.add(new StimulusResponse(stimulusDB, stimulusDetected));
         stimulusDB = nextStimulusDB;
 

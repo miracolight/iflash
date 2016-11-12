@@ -12,6 +12,8 @@ import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusSelector;
 import com.tongchuang.perimetrypro.perimetry.stimulus.impl.BlindSpotPostProcessor;
 import com.tongchuang.perimetrypro.perimetry.stimulus.impl.BlindSpotStimulusRunnerImpl;
+import com.tongchuang.perimetrypro.perimetry.stimulus.impl.FalseNegativePostProcessor;
+import com.tongchuang.perimetrypro.perimetry.stimulus.impl.FalseNegativeStimulusRunnerImpl;
 import com.tongchuang.perimetrypro.util.ExamUtil;
 
 import java.lang.reflect.Constructor;
@@ -42,6 +44,8 @@ public class ExamTaskBuilder {
 
         Map<String, Integer> initStimulusDB = examSettings.getInitStimulusDB(currFieldOption);
         BlindSpotPostProcessor blindSpotPostProcessor = new BlindSpotPostProcessor(context);
+        FalseNegativePostProcessor falseNegativePostProcessor = new FalseNegativePostProcessor(context);
+
         List<StimulusRunner> stimulusRunners = new ArrayList<StimulusRunner>();
         Map<String, Point> positionPoints = new HashMap<String, Point>();
         for (String code : stimulusPositionCodes) {
@@ -50,6 +54,8 @@ public class ExamTaskBuilder {
 
             if (code.equals(blindSpot)) {
                 exam.setBlindSpotRunner(new BlindSpotStimulusRunnerImpl(blindSpotPostProcessor, code, exam));
+                //build FalseNegativeRunner here
+                exam.setFalseNegativeRunner(new FalseNegativeStimulusRunnerImpl(falseNegativePostProcessor, code, exam));  //code can be any, here is the same as blindspot
             } else {
                 StimulusRunner r = (StimulusRunner)stimulusRunnerConstructor.newInstance(code, db==null?minStimulusDB:db.intValue(), exam);
                 stimulusRunners.add(r);

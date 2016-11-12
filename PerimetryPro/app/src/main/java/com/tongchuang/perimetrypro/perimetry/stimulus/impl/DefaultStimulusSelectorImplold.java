@@ -14,24 +14,17 @@ import java.util.Random;
 
 /**
  * Created by qingdi on 8/8/16.
- * Updated by Ming on Nov, 2016  //adding false negative and positive stimulus
  */
-public class DefaultStimulusSelectorImpl implements StimulusSelector {
+public class DefaultStimulusSelectorImplold implements StimulusSelector{
 
     private static final int MIN_RUNNER_POOL_SIZE = 5;
-    private static final int TRAINING_STIMULUS_COUNT = 5; //5;
+    private static final int TRAINING_STIMULUS_COUNT=5;
     private int currTrainingShown = 0;
 
     private Map<Integer, List<StimulusRunner>> stimulusRunnersByPriorities;
-    private Map<Integer, List<StimulusRunner>> stimulusRunnersAll;
 
     private StimulusRunner blindSpotRunner;
-    private StimulusRunner falseNegativeRunner;
-    //private boolean     showBlindSpot;
-    private double      blindSpotWeight = 0.05d;  //blind spot is testing false positive at the same stimulus (i.e. blind spot)
-
-    //private boolean    showFalsePositive;
-    private double     falseNegativeWeight = 0.95d; /// 0.95d; testing, acutal value should be 0.95d (for 5%)
+    private double      blindSpotWeight = 0.1d;
 
     private int currLevel = Integer.MAX_VALUE;
     private int maxLevel = Integer.MIN_VALUE;
@@ -43,17 +36,12 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
     private Random runnerRandom = new Random();
 
 
-
-    public DefaultStimulusSelectorImpl(ExamTask examTask) {
+    public DefaultStimulusSelectorImplold(ExamTask examTask) {
         stimulusRunnersByPriorities = new HashMap<Integer, List<StimulusRunner>>();
-        stimulusRunnersAll = new HashMap<Integer, List<StimulusRunner>>();
         ExamSettings examSettings = examTask.getExamSettings();
         Map<String, Integer> priorities = examSettings.getStimulusPriorities(examTask.getCurrFieldOption());
         List<StimulusRunner> runners = examTask.getStimulusRunners();
-
         blindSpotRunner = examTask.getBlindSpotRunner();
-        falseNegativeRunner = examTask.getFalseNegativeRunner();
-//        stimulusRunnersAll.put(1, examTask.getStimulusRunners());
 
         for (StimulusRunner r : runners) {
             Integer priority = priorities.get(r.getPositionCode());
@@ -66,25 +54,16 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
                 maxLevel = priority;
             }
             List<StimulusRunner> rList = stimulusRunnersByPriorities.get(priority);
-
             if (rList == null) {
                 rList = new ArrayList<StimulusRunner>();
                 stimulusRunnersByPriorities.put(priority, rList);
             }
             rList.add(r);
-
-            List<StimulusRunner> aList = stimulusRunnersAll.get(1);
-            if(aList == null) {
-                aList = new ArrayList<StimulusRunner>();
-                stimulusRunnersAll.put(1, aList);
-            }
-            aList.add(r);
-
         }
+
         if (examSettings.getStimulateCountMax() != null) {
             stimulateCountMax = examSettings.getStimulateCountMax();
         }
-
     }
 
 
@@ -95,34 +74,17 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
         if (currTrainingShown < TRAINING_STIMULUS_COUNT) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             if (runners != null && !runners.isEmpty()) {
-                falseNegativeRunner = runners.get(getRandomIndex(runners.size()));
+                runner = runners.get(getRandomIndex(runners.size()));
             }
-            falseNegativeRunner.setForTraining(true);
+            runner.setForTraining(true);
             currTrainingShown++;
             System.out.println("aimu_log: currTrainingShown="+currTrainingShown);
-            return falseNegativeRunner;
+            return runner;
         }
 
-        double r = blindSpotCheckRandom.nextDouble();   // didn't change name when adding false positive
-        System.out.println("aimu_log: showSpot random = "+r);
-        if (r < blindSpotWeight) {
-            System.out.println("aimu_log: showBlindSpot = true");
+        if (showBlindSpot()) {
+            System.out.println("aimu_log: showBlindSpot=true");
             return blindSpotRunner;
-        }
-        if (r> falseNegativeWeight){
-            System.out.println("aimu_log: showFalseSpot = true");
-            // return;
-            //List<StimulusRunner> temp =
-            List<StimulusRunner> runnersAll = stimulusRunnersAll.get(1);  //get(currLevel);
-            //removeFinishedRunners(runners);
-            if (runnersAll != null && !runnersAll.isEmpty()) {
-                falseNegativeRunner = runnersAll.get(getRandomIndex(runnersAll.size()));
-                System.out.println("aimu_log:  false Negative runners.size()="+runnersAll.size()+"; poscode="+falseNegativeRunner.getPositionCode());
-            }
-            falseNegativeRunner.setForTraining(true);
-
-            //System.out.println("aimu_log: currTrainingShown="+currTrainingShown);
-            return falseNegativeRunner;
         }
 
         while (currLevel <= maxLevel && stimulateCount < stimulateCountMax) {
@@ -150,15 +112,15 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
         return runner;
     }
 
-  /*  private boolean showFalseSpot() {
-        double r = blindSpotCheckRandom.nextDouble();   // didn't change name when adding false positive
-        System.out.println("aimu_log: falseSpot random = "+r);
+    private boolean showBlindSpot() {
+        double r = blindSpotCheckRandom.nextDouble();
+        System.out.println("aimu_log: blindSpot random = "+r);
         if (r < blindSpotWeight) {
-            showBlindSpot = true;
+            return true;
         }
         return false;
     }
-*/
+
 
     private List<StimulusRunner> getRestAvailableRunners(int currLevel) {
         List<StimulusRunner> runners = new ArrayList<StimulusRunner>();

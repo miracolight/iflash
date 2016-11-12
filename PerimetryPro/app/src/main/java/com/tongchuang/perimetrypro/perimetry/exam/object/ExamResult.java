@@ -39,6 +39,8 @@ public class ExamResult {
     private String     blindSpotCheckedLeft;
     private String     blindSpotCheckedRight;
 
+    private String     falseNegative;
+
     public ExamResult() {
     }
 
@@ -63,14 +65,16 @@ public class ExamResult {
         examResultLeft = new HashMap<String, String>();
         allResponsesLeft = new HashMap<String, String>();
         addResult(exam, examResultLeft, allResponsesLeft);
-        blindSpotCheckedLeft = getBlindSpotStatus(exam);
+        blindSpotCheckedLeft = getBlindSpotStatus(exam) + " | " + getFalseNegativeStatus(exam);
+        falseNegative = getFalseNegativeStatus(exam);
     }
 
     public void addRightResult(ExamTask exam) {
         examResultRight = new HashMap<String, String>();
         allResponsesRight = new HashMap<String, String>();
         addResult(exam, examResultRight, allResponsesRight);
-        blindSpotCheckedRight = getBlindSpotStatus(exam);
+        blindSpotCheckedRight = getBlindSpotStatus(exam) + " | " + getFalseNegativeStatus(exam);
+        falseNegative = getFalseNegativeStatus(exam);
     }
 
     private void addResult(ExamTask exam, Map<String, String> examResult, Map<String, String> allResponses) {
@@ -102,6 +106,27 @@ public class ExamResult {
             }
 
             result = detected+"/"+total;
+            System.out.println("aimu_log: Fixation Loss = "+result);
+        }
+
+        return result;
+    }
+
+    private String getFalseNegativeStatus(ExamTask exam) {
+        String result =null;
+
+        if (exam.getFalseNegativeRunner() != null && exam.getFalseNegativeRunner().getAllResponses() != null) {
+            int total = 0;
+            int nodetected = 0;
+            for (StimulusResponse r : exam.getFalseNegativeRunner().getAllResponses()) {
+                if (!r.isDetected()) {
+                    nodetected++;
+                }
+                total++;
+            }
+
+            result = nodetected+"/"+total;
+            System.out.println("aimu_log: FalseNegative = "+result);
         }
 
         return result;
