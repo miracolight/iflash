@@ -46,6 +46,14 @@ public interface ExamTask extends Runnable{
     public int getMaxStimulusDB();
 
     public int getMinStimulusDB();
+
+    public int getProgress();
+
+    public void setProgress(int progress);
+
+    public int getRCounter();
+
+    public void setRCounter(int rCounter);
     
     public List<StimulusRunner> getStimulusRunners();
     public StimulusSelector getStimulusSelector();

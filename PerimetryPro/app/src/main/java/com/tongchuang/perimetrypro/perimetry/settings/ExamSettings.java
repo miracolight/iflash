@@ -33,7 +33,7 @@ public class ExamSettings {
                 minStimulusDB = db;
             }
             if (db > maxStimulusDB) {
-                maxStimulusDB = db;
+                maxStimulusDB = 35;   // db; fix cap maxDB = 35
             }
         }
     }

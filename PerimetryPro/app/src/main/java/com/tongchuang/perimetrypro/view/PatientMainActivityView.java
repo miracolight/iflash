@@ -74,7 +74,8 @@ public class PatientMainActivityView extends View{
         canvas.drawArc(C3,150, 118, false, paint);
         canvas.drawArc(C3,270, 118, false, paint);
         // paint.setStrokeWidth(6);
-        canvas.drawRect(C5, paint);
+
+        // canvas.drawRect(C5, paint);  //this is the rectangle box
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.rgb(0, 127, 0));

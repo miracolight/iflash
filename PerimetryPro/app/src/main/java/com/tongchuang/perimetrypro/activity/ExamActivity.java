@@ -150,7 +150,8 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onStimulusChange() {
         runOnUiThread(new UIUpdateRunner());
-
+        exam.getStimulusSelector().updateCurrentProgress(exam);
+        exam.setRCounter(exam.getRCounter()+1);
     }
 
     @Override
@@ -176,8 +177,9 @@ public class ExamActivity extends AppCompatActivity implements View.OnTouchListe
                 layout.screenBrightness = currentStimulus.getIntensity().getScreenBrightness();
                 getWindow().setAttributes(layout);
             }
-
             examView.invalidate();
         }
+
+
     }
 }

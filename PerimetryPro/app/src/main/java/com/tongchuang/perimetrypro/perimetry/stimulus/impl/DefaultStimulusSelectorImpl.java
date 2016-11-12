@@ -27,6 +27,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
 
     private StimulusRunner blindSpotRunner;
     private StimulusRunner falseNegativeRunner;
+    private int iprogress;
     //private boolean     showBlindSpot;
     private double      blindSpotWeight = 0.05d;  //blind spot is testing false positive at the same stimulus (i.e. blind spot)
 
@@ -53,6 +54,9 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
 
         blindSpotRunner = examTask.getBlindSpotRunner();
         falseNegativeRunner = examTask.getFalseNegativeRunner();
+      //  iprogress = examTask.getProgress();
+        //int r, a;
+
 //        stimulusRunnersAll.put(1, examTask.getStimulusRunners());
 
         for (StimulusRunner r : runners) {
@@ -79,19 +83,28 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
                 stimulusRunnersAll.put(1, aList);
             }
             aList.add(r);
-
         }
         if (examSettings.getStimulateCountMax() != null) {
             stimulateCountMax = examSettings.getStimulateCountMax();
         }
-
     }
 
+   @Override
+   public void updateCurrentProgress (ExamTask examTask) {
+       int iProgress = examTask.getProgress();
+       List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
+       removeFinishedRunners(runners);
+       List<StimulusRunner> runnersAll = stimulusRunnersAll.get(1);
+       if (runners != null && !runners.isEmpty()) {
+           iProgress = 100 - (int) ((double) runners.size() / (double) (runnersAll.size()) * 100);
+       }
+       examTask.setProgress (iProgress);
+   }
 
     @Override
     public StimulusRunner getNextStimulus() {
-        StimulusRunner runner = null;
 
+        StimulusRunner runner = null;
         if (currTrainingShown < TRAINING_STIMULUS_COUNT) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             if (runners != null && !runners.isEmpty()) {
@@ -100,6 +113,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
             falseNegativeRunner.setForTraining(true);
             currTrainingShown++;
             System.out.println("aimu_log: currTrainingShown="+currTrainingShown);
+
             return falseNegativeRunner;
         }
 
@@ -128,6 +142,7 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
         while (currLevel <= maxLevel && stimulateCount < stimulateCountMax) {
             List<StimulusRunner> runners = stimulusRunnersByPriorities.get(currLevel);
             removeFinishedRunners(runners);
+
             if (runners != null && !runners.isEmpty()) {
 
                 if (runners.size() < MIN_RUNNER_POOL_SIZE) {
@@ -142,6 +157,8 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
                     runner = runners.get(getRandomIndex(runners.size()));
                 }
                 System.out.println("aimu_log: level="+currLevel+"; runners.size()="+runners.size()+"; poscode="+runner.getPositionCode());
+
+
                 break;
             }
             currLevel++;
@@ -149,16 +166,6 @@ public class DefaultStimulusSelectorImpl implements StimulusSelector {
         stimulateCount++;
         return runner;
     }
-
-  /*  private boolean showFalseSpot() {
-        double r = blindSpotCheckRandom.nextDouble();   // didn't change name when adding false positive
-        System.out.println("aimu_log: falseSpot random = "+r);
-        if (r < blindSpotWeight) {
-            showBlindSpot = true;
-        }
-        return false;
-    }
-*/
 
     private List<StimulusRunner> getRestAvailableRunners(int currLevel) {
         List<StimulusRunner> runners = new ArrayList<StimulusRunner>();

@@ -2,6 +2,7 @@ package com.tongchuang.perimetrypro.perimetry.exam.impl;
 
 import android.graphics.Point;
 
+import com.tongchuang.perimetrypro.activity.ExamActivity;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTask;
 import com.tongchuang.perimetrypro.perimetry.exam.ExamTaskListener;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
@@ -36,7 +37,8 @@ public class DefaultExamTaskImpl implements ExamTask {
     private boolean                     showStimulus = false;
     private boolean                     examDone = false;
     private ExamTask.STATE              taskState;
-
+    private int                         progress = 0;
+    private int                         rCounter = 0;
 
     private List<ExamTaskListener>      examTaskListeners;
 
@@ -185,6 +187,25 @@ public class DefaultExamTaskImpl implements ExamTask {
 
     public void setMinStimulusDB(int minStimulusDB) {
         this.minStimulusDB = minStimulusDB;
+    }
+
+    @Override
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    @Override
+    public int getRCounter() {
+        return rCounter;
+    }
+
+    @Override
+    public void setRCounter(int rCounter) {
+        this.rCounter = rCounter;
     }
 
     @Override

@@ -12,6 +12,9 @@ import com.tongchuang.perimetrypro.perimetry.settings.ExamSettings;
 import com.tongchuang.perimetrypro.perimetry.stimulus.StimulusRunner;
 import com.tongchuang.perimetrypro.perimetry.stimulus.object.StimulusInstance;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Created by qingdi on 3/4/16.
  */
@@ -21,7 +24,6 @@ public class ExamView extends View{
     private Paint paint = new Paint();
 
     private ExamActivity    examActivity;
-
 
     public ExamView(ExamActivity examActivity) {
         super(examActivity);
@@ -34,8 +36,14 @@ public class ExamView extends View{
 
     @Override
     protected void onDraw(Canvas canvas) {
+        int notCompleted=0;
+        //int iprogress;
+        int progress=0;
 
         ExamTask exam = examActivity.getExam();
+        List<StimulusRunner> runners;
+
+        int xPos = 0; int yPos = 70;
         if (exam.isRunning()) {
             StimulusRunner stimulusRunner = exam.getCurrentStimulusRunner();
 
@@ -48,11 +56,34 @@ public class ExamView extends View{
             }
 
             if (stimulusRunner.isStimulusDetected()) {
-                paint.setTextSize(exam.getTextDisplaySize()*2);
-                paint.setColor(Color.RED);
-                int xPos = 35; int yPos = 35;
-                canvas.drawText(stimulusRunner.getPositionCode(), xPos, yPos, paint);
-                canvas.drawText(Integer.toString(stimulusRunner.getCurrentStimulusDB()), xPos, yPos*2, paint);
+ //               paint.setTextSize(exam.getTextDisplaySize()*2);
+ //               paint.setColor(Color.RED);
+ //               canvas.drawText(stimulusRunner.getPositionCode(), xPos, yPos, paint);
+               // canvas.drawText(Integer.toString(stimulusRunner.getCurrentStimulusDB()), xPos, yPos*2, paint);
+ /*
+                runners = exam.getStimulusRunners();
+                //fullSize = exam.getExamSettings().get   //getStimulusRunners().size();
+
+                if (runners == null || runners.isEmpty()) {
+                    notCompleted = 0;
+                    progress = 100;
+                }
+                else {
+                    Iterator<StimulusRunner> it = runners.iterator();
+                    while (it.hasNext()) {
+                        StimulusRunner r = it.next();
+                        if (!r.isFinished()) {
+                            notCompleted += 1;
+                        }
+                    }
+                   // notCompleted = runners.size();
+                }
+
+                progress = 100 - (int)((double)notCompleted/53.0 *100.0);
+               // canvas.drawText(Integer.toString(notCompleted)  ,  xPos, yPos, paint);   //Integer.toString(fullSize)
+              //  canvas.drawText(Integer.toString(progress) + "%" ,  xPos, yPos*2 + 10, paint);   //Integer.toString(fullSize)
+                exam.setProgress(progress);
+                */
             }
 
            // paint.setColor(Color.RED);
@@ -60,6 +91,13 @@ public class ExamView extends View{
             for (Point p : exam.getFixations()) {
                 canvas.drawCircle(p.x, p.y, exam.getFixationRadius(), paint);
             }
+
+            // draw test progress
+            paint.setTextSize(exam.getTextDisplaySize()*3);
+            paint.setColor(Color.RED);
+            canvas.drawText("进程：" + Integer.toString(exam.getProgress()) + "%" , xPos, yPos, paint);
+            canvas.drawText("视标：" + Integer.toString(exam.getRCounter()/2) + "/" + exam.getExamSettings().getStimulateCountMax() , xPos, yPos*2, paint);
+
         } else if (exam.isDone()) {
             paint.setColor(Color.WHITE);
             paint.setTextSize(exam.getTextDisplaySize());
@@ -79,5 +117,6 @@ public class ExamView extends View{
             }
         }
     }
+
 
 }
