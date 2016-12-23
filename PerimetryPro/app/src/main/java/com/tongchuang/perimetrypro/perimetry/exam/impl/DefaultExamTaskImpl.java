@@ -232,11 +232,8 @@ public class DefaultExamTaskImpl implements ExamTask {
             }
             currentStimulus.processs();
         }
-
         examDone = true;
         notifyExamTaskDone();
-
-
     }
 
     private void notifyStimulusChange() {

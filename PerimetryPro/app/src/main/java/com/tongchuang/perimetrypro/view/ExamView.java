@@ -96,7 +96,7 @@ public class ExamView extends View{
             paint.setTextSize(exam.getTextDisplaySize()*3);
             paint.setColor(Color.RED);
             canvas.drawText("进程：" + Integer.toString(exam.getProgress()) + "%" , xPos, yPos, paint);
-            canvas.drawText("视标：" + Integer.toString(exam.getRCounter()/2) + "/" + exam.getExamSettings().getStimulateCountMax() , xPos, yPos*2, paint);
+            canvas.drawText("视标：" + Integer.toString(exam.getRCounter()/2) + "/" + (int)(exam.getExamSettings().getStimulateCountMax()*1.1), xPos, yPos*2, paint);
 
         } else if (exam.isDone()) {
             paint.setColor(Color.WHITE);

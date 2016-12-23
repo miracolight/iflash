@@ -61,7 +61,39 @@ public class PatientMainActivityView extends View{
         }
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(1);
+
+        RectF C194 = new RectF(fixation.x - 194, fixation.y-194, fixation.x+194, fixation.y+194); // left top right bottom  //circle box
+        RectF C195 = new RectF(fixation.x - 195, fixation.y-195, fixation.x+195, fixation.y+195); // left top right bottom  //circle box
+        RectF C196 = new RectF(fixation.x - 196, fixation.y-196, fixation.x+196, fixation.y+196); // left top right bottom  //circle box
+        RectF C193 = new RectF(fixation.x - 193, fixation.y-193, fixation.x+193, fixation.y+193); // left top right bottom  //circle box
+        RectF C192 = new RectF(fixation.x - 192, fixation.y-192, fixation.x+192, fixation.y+192); // left top right bottom  //circle box
+        RectF C197 = new RectF(fixation.x - 197, fixation.y-197, fixation.x+197, fixation.y+197); // left top right bottom  //circle box
+        RectF C198 = new RectF(fixation.x - 198, fixation.y-198, fixation.x+198, fixation.y+198); // left top right bottom  //circle box
+        RectF C199 = new RectF(fixation.x - 199, fixation.y-199, fixation.x+199, fixation.y+199); // left top right bottom  //circle box
+        RectF C200 = new RectF(fixation.x - 200, fixation.y-200, fixation.x+200, fixation.y+200); // left top right bottom  //circle box
+
+        paint.setColor(Color.rgb(0,0,200));   //.WHITE);
+        canvas.drawArc(C192,0, 360, false, paint);
+        paint.setColor(Color.rgb(0,200,200));   //.WHITE);
+        canvas.drawArc(C193,0, 360, false, paint);
+
+        paint.setColor(Color.rgb(200,200,200));   //.WHITE);
+        canvas.drawArc(C194,0, 360, false, paint);
+        paint.setColor(Color.rgb(200,200,200));   //.WHITE);
+        canvas.drawArc(C195,0, 360, false, paint);
+        paint.setColor(Color.rgb(200,200,200));   //.WHITE);
+        canvas.drawArc(C196,0, 360, false, paint);
+        paint.setColor(Color.rgb(200,200,200));   //.WHITE);
+        canvas.drawArc(C197,0, 360, false, paint);
+
+        paint.setColor(Color.rgb(200,200,0));   //.WHITE);
+        canvas.drawArc(C198,0, 360, false, paint);
+        paint.setColor(Color.rgb(200,0,0));   //.WHITE);
+        canvas.drawArc(C199,0, 360, false, paint);
+
         paint.setStrokeWidth(6);
+        paint.setColor(Color.rgb(200,200,200));   //.WHITE);
         RectF C1 = new RectF(fixation.x - 180, fixation.y-180, fixation.x+180, fixation.y+180); // left top right bottom  //circle box
         RectF C2 = new RectF(fixation.x - 120, fixation.y-120, fixation.x+120, fixation.y+120);  //circle box
         RectF C3 = new RectF(fixation.x - 60, fixation.y-60, fixation.x+60, fixation.y+60);  //circle box

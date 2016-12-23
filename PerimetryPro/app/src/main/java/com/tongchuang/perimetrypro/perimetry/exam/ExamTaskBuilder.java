@@ -49,9 +49,11 @@ public class ExamTaskBuilder {
         List<StimulusRunner> stimulusRunners = new ArrayList<StimulusRunner>();
         Map<String, Point> positionPoints = new HashMap<String, Point>();
         for (String code : stimulusPositionCodes) {
-            Integer db = initStimulusDB.get(code);
+            Integer db = initStimulusDB.get(code) - 2  ;  // Ming 11/12/2016  Reduce 2 dB at previous tested threshold.
+            if (db < minStimulusDB ) {
+                db = minStimulusDB;
+            }
             positionPoints.put(code, ExamUtil.getPoint(code, examSettings, currFieldOption));
-
             if (code.equals(blindSpot)) {
                 exam.setBlindSpotRunner(new BlindSpotStimulusRunnerImpl(blindSpotPostProcessor, code, exam));
                 //build FalseNegativeRunner here
