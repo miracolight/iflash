@@ -31,9 +31,11 @@ public class ExamResult {
     private ExamSettings.EXAM_FIELD_OPTION examFieldOption;
 
     private Map<String, String> examResultLeft;
+    private Map<String, String> examCurLeft;
     private Map<String, String> allResponsesLeft;
 
     private Map<String, String> examResultRight;
+    private Map<String, String> examCurRight;
     private Map<String, String> allResponsesRight;
 
     private String     blindSpotCheckedLeft;
@@ -64,7 +66,8 @@ public class ExamResult {
     public void addLeftResult(ExamTask exam) {
         examResultLeft = new HashMap<String, String>();
         allResponsesLeft = new HashMap<String, String>();
-        addResult(exam, examResultLeft, allResponsesLeft);
+        examCurLeft  = new HashMap<String, String>();
+        addResult(exam, examResultLeft, examCurLeft, allResponsesLeft);
         blindSpotCheckedLeft = getBlindSpotStatus(exam) + " | " + getFalseNegativeStatus(exam);
         falseNegative = getFalseNegativeStatus(exam);
     }
@@ -72,21 +75,24 @@ public class ExamResult {
     public void addRightResult(ExamTask exam) {
         examResultRight = new HashMap<String, String>();
         allResponsesRight = new HashMap<String, String>();
-        addResult(exam, examResultRight, allResponsesRight);
+        examCurRight  = new HashMap<String, String>();
+        addResult(exam, examResultRight, examCurRight, allResponsesRight);
         blindSpotCheckedRight = getBlindSpotStatus(exam) + " | " + getFalseNegativeStatus(exam);
         falseNegative = getFalseNegativeStatus(exam);
     }
 
-    private void addResult(ExamTask exam, Map<String, String> examResult, Map<String, String> allResponses) {
+    private void addResult(ExamTask exam, Map<String, String> examResult, Map<String, String> examCur, Map<String, String> allResponses) {
         List<StimulusRunner> runners = exam.getStimulusRunners();
         for (StimulusRunner r : runners) {
             examResult.put(r.getPositionCode(), r.getFinalResult());
+            examCur.put(r.getPositionCode(), r.getFinalResult());
             allResponses.put(r.getPositionCode(), ExamUtil.fromAllResponses(r.getAllResponses()));
         }
 
         if (exam.getBlindSpotRunner() != null) {
             StimulusRunner r = exam.getBlindSpotRunner();
             examResult.put(r.getPositionCode(), r.getFinalResult());
+            examCur.put(r.getPositionCode(), r.getFinalResult());
             allResponses.put(r.getPositionCode(), ExamUtil.fromAllResponses(r.getAllResponses()));
         }
     }
