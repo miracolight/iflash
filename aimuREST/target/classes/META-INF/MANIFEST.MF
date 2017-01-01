@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: visiondemo
+Implementation-Version: 0.0.2-SNAPSHOT
+Built-By: Miracolight
+Implementation-Vendor-Id: com.tongchuang
+Build-Jdk: 1.8.0_102
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

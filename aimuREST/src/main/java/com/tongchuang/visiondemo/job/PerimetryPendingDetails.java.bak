@@ -1,0 +1,27 @@
+package com.tongchuang.visiondemo.job;
+
+public class PerimetryPendingDetails {
+	private String 	patientId; 
+	private String lastUpdateDate;
+	private Long	testId;
+	
+	public String getPatientId() {
+		return patientId;
+	}
+	public void setPatientId(String patientId) {
+		this.patientId = patientId;
+	}
+	public Long getTestId() {
+		return testId;
+	}
+	public void setTestId(Long testId) {
+		this.testId = testId;
+	}
+	public String getLastUpdatedDate() {
+		return lastUpdateDate;
+	}
+	public void setlastUpdateDate(String lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}	
+	
+}
